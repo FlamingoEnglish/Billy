@@ -3,1308 +3,526 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050506">
+<meta name="theme-color" content="#080604">
 <title>Billy's Dashboard</title>
-<script src="topbar.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --text-primary: #FAFAFA;
-  --text-secondary: #B8B6B0;
-  --text-tertiary: #76746E;
-  --success: #6BE3A4;
-  --warning: #F2C063;
-  --danger: #FF6B6B;
-  --font: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-}
-
-* { box-sizing: border-box; }
-html, body {
-  margin: 0; padding: 0;
-  background: #050506;
-  color: var(--text-secondary);
-  font-family: var(--font);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-body {
-  min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-  padding: max(28px, env(safe-area-inset-top)) 20px 60px;
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background:
-    radial-gradient(circle at 82% 14%, rgba(224, 118, 88, 0.16), transparent 45%),
-    radial-gradient(circle at 18% 90%, rgba(180, 180, 200, 0.06), transparent 50%);
-  filter: blur(40px);
-  pointer-events: none;
-  z-index: -2;
-  animation: drift 36s ease-in-out infinite alternate;
-}
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,0.014) 1px, transparent 1px);
-  background-size: 3px 3px;
-  pointer-events: none;
-  z-index: -1;
-}
-@keyframes drift {
-  0%   { transform: translate3d(0,0,0); }
-  100% { transform: translate3d(-22px, 14px, 0); }
-}
-
-.page {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-/* ===== Component 1: page title ===== */
-.dash-title {
-  margin: 0 0 14px;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  background: linear-gradient(180deg, #FFFFFF 0%, #C7C4BC 120%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-@media (max-width: 480px) { .dash-title { font-size: 22px; } }
-
-/* ===== Component 2: Goal Ticker ===== */
-.ticker-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
-  margin-bottom: 18px;
-}
-.goal-ticker {
-  position: relative; overflow: hidden;
-  display: flex; align-items: center; gap: 10px;
-  padding: 7px 12px;
-  border-radius: 12px;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.30) 100%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 3px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-}
-.goal-ticker::after {
-  content: '';
-  position: absolute; top: 0; bottom: 0;
-  width: 30%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-  pointer-events: none;
-  animation: ticker-sweep 8s linear infinite;
-}
-@keyframes ticker-sweep {
-  0%   { left: -40%; }
-  100% { left: 110%; }
-}
-.goal-ticker-led { display: inline-flex; align-items: center; }
-.goal-ticker-led-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #6BE3A4;
-  box-shadow: 0 0 8px rgba(107,227,164,0.7);
-  animation: led-pulse 1.6s ease-in-out infinite;
-}
-@keyframes led-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.45; transform: scale(0.85); }
-}
-.goal-ticker-label {
-  font-family: var(--font-mono);
-  font-size: 9.5px; font-weight: 800;
-  letter-spacing: 0.18em;
-  color: var(--text-tertiary);
-}
-.goal-ticker-stage {
-  position: relative; overflow: hidden;
-  flex: 1; height: 22px;
-}
-.goal-ticker-row {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12.5px; font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-.goal-ticker-row.is-leaving  { animation: ticker-leave 0.45s cubic-bezier(0.55, 0, 0.55, 1) forwards; }
-.goal-ticker-row.is-entering { animation: ticker-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-@keyframes ticker-leave { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
-@keyframes ticker-enter { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
-.goal-ticker-status {
-  display: inline-flex; justify-content: center;
-  width: 18px;
-  color: var(--text-tertiary);
-}
-.goal-ticker-status[data-status="done"]    { color: var(--success); }
-.goal-ticker-status[data-status="pending"] { color: var(--text-tertiary); }
-.goal-ticker-text {
-  flex: 1;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.goal-ticker-meta {
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.04);
-}
-@media (max-width: 480px) {
-  .goal-ticker { padding: 9px 12px; }
-  .goal-ticker-label { font-size: 9px; letter-spacing: 0.14em; }
-  .goal-ticker-row { font-size: 12px; }
-  .goal-ticker-meta { font-size: 10px; padding: 2px 7px; }
-}
-
-/* ===== Component 3: Day Ring ===== */
-.day-ring-wrap {
-  display: flex; flex-wrap: wrap;
-  align-items: center; justify-content: center;
-  gap: 26px;
-  padding: 22px;
-  margin-bottom: 22px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-}
-.day-ring {
-  position: relative;
-  width: 168px; height: 168px;
-  flex-shrink: 0;
-}
-.day-ring svg { width: 100%; height: 100%; display: block; }
-.day-ring-track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
-.day-ring-fill {
-  fill: none;
-  stroke-width: 8;
-  stroke-linecap: round;
-  transform: rotate(-90deg);
-  transform-origin: 60px 60px;
-  transition: stroke 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-              stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.day-ring-overlay {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  pointer-events: none;
-}
-.day-ring-percent {
-  font-size: 40px; font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.04em;
-  color: var(--text-primary);
-  line-height: 1;
-}
-.day-ring-phase {
-  margin-top: 5px;
-  font-family: var(--font-mono);
-  font-size: 9.5px; font-weight: 800;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-.day-ring-clock {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--text-tertiary);
-  margin-top: 2px;
-}
-.day-ring-text {
-  display: flex; flex-direction: column;
-  gap: 6px;
-  max-width: 280px;
-}
-.day-ring-status { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-.day-ring-remaining { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
-.day-ring-hours { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); }
-@media (max-width: 480px) {
-  .day-ring { width: 144px; height: 144px; }
-  .day-ring-percent { font-size: 32px; }
-  .day-ring-status { font-size: 13px; }
-}
-
-/* ===== Component 4: section + To Do List ===== */
-.section { margin-top: 8px; }
-.section-title {
-  font-size: 10.5px; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--text-tertiary);
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 12px;
-}
-.section-title::before {
-  content: ''; width: 18px; height: 1px;
-  background: var(--text-tertiary); opacity: 0.6;
-}
-.section-title::after {
-  content: ''; flex: 1; height: 1px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.08), transparent);
-}
-
-.gm-card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 14px;
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-  transition: background 0.4s;
-  overflow: hidden;
-}
-.gm-card.gm-all-done::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(107,227,164,0.10), transparent 60%);
-  pointer-events: none;
-}
-.gm-card.gm-all-done .gm-progress-num,
-.gm-card.gm-all-done .gm-progress-label { color: var(--success); }
-
-.gm-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px;
-  margin-bottom: 14px;
-  position: relative;
-}
-.gm-header-left { display: flex; flex-direction: column; }
-.gm-eyebrow {
-  font-size: 10.5px; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin-bottom: 6px;
-}
-.gm-progress-row { display: flex; align-items: baseline; gap: 6px; }
-.gm-progress-num {
-  font-size: 42px; font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.045em;
-  color: var(--text-primary);
-  line-height: 1;
-}
-.gm-progress-total {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  color: var(--text-tertiary);
-}
-.gm-progress-label {
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.10em; text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin-left: 4px;
-}
-.gm-tomorrow-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 4px; }
-.gm-tomorrow-count {
-  font-family: var(--font-mono);
-  font-size: 11px; font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em; text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-.gm-card-tomorrow .gm-progress-row { display: none; }
-
-.gm-streak {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
-  color: var(--text-tertiary);
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.10em; text-transform: uppercase;
-  transition: background 0.25s, color 0.25s, border-color 0.25s;
-}
-.gm-streak-icon { font-size: 13px; }
-.gm-streak-num {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.gm-streak.gm-streak-active {
-  background: rgba(242,192,99,0.10);
-  color: #F2C063;
-  border-color: rgba(242,192,99,0.32);
-}
-.gm-streak.gm-streak-active .gm-streak-icon {
-  filter: drop-shadow(0 0 6px rgba(242,192,99,0.6));
-}
-
-.gm-bar {
-  display: flex; gap: 4px;
-  height: 6px;
-  margin-bottom: 16px;
-}
-.gm-bar:empty { display: none; }
-.gm-bar-seg {
-  flex: 1;
-  background: rgba(255,255,255,0.06);
-  border-radius: 3px;
-  transition: background 0.3s, box-shadow 0.3s;
-}
-.gm-bar-seg-done {
-  background: #6BE3A4;
-  box-shadow: 0 0 6px rgba(107,227,164,0.40);
-}
-
-.goal-list { list-style: none; margin: 0; padding: 0; }
-.empty-state {
-  text-align: center;
-  font-size: 12px; font-style: italic;
-  color: var(--text-tertiary);
-  padding: 14px 0;
-}
-
-.gm-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
-  margin-bottom: 6px;
-  background: rgba(255,255,255,0.035);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
-  transition: background 0.2s, opacity 0.3s;
-  position: relative;
-}
-.gm-row:hover { background: rgba(255,255,255,0.06); }
-.gm-row.gm-row-done {
-  opacity: 0.45;
-  background: rgba(107,227,164,0.04);
-}
-.gm-row.gm-row-done .gm-text {
-  text-decoration: line-through;
-  text-decoration-color: rgba(255,255,255,0.4);
-}
-.gm-row.gm-row-queued {
-  background: rgba(242,192,99,0.10);
-  box-shadow: inset 3px 0 0 0 #F2C063;
-}
-.gm-row.gm-row-queued .gm-text { color: #FFE2A8; }
-.gm-row.is-drag-over { border-top: 2px solid #6BE3A4; }
-.gm-row.is-queue-flashing { animation: gm-queue-flash 0.48s ease-out; }
-@keyframes gm-queue-flash {
-  0%   { background: rgba(255,255,255,0.035); transform: scale(1); }
-  40%  { background: rgba(242,192,99,0.32); transform: scale(1.015); }
-  100% { background: rgba(255,255,255,0.035); transform: scale(1); }
-}
-
-.gm-handle {
-  width: 14px; flex-shrink: 0;
-  color: var(--text-tertiary);
-  font-weight: 700; font-size: 14px;
-  letter-spacing: -2px;
-  cursor: grab;
-  opacity: 0;
-  transition: opacity 0.2s;
-  user-select: none;
-}
-.gm-row:hover .gm-handle { opacity: 1; }
-.gm-handle:active { cursor: grabbing; }
-
-.gm-check {
-  appearance: none; -webkit-appearance: none;
-  width: 22px; height: 22px; flex-shrink: 0;
-  margin: 0;
-  border: 1.5px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.28);
-  border-radius: 7px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.25s;
-}
-.gm-check:checked {
-  background: #6BE3A4;
-  border-color: #6BE3A4;
-  box-shadow: 0 0 12px rgba(107,227,164,0.40);
-}
-.gm-check:checked::after {
-  content: '';
-  position: absolute; left: 6px; top: 2px;
-  width: 6px; height: 11px;
-  border: solid #0A0A0B;
-  border-width: 0 2.5px 2.5px 0;
-  transform: rotate(45deg);
-  animation: gm-check-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes gm-check-pop {
-  from { transform: rotate(45deg) scale(0); }
-  to   { transform: rotate(45deg) scale(1); }
-}
-.gm-check:disabled { cursor: not-allowed; opacity: 0.55; }
-
-.gm-text {
-  flex: 1;
-  font-size: 14px;
-  color: var(--text-primary);
-  cursor: text;
-  outline: none;
-  border-radius: 4px;
-  padding: 2px 4px;
-  margin: -2px -4px;
-}
-.gm-text[contenteditable="true"] {
-  outline: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.28);
-}
-
-.gm-queue-btn {
-  border: 0; background: transparent;
-  color: var(--text-tertiary);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 6px;
-  opacity: 0.55;
-  transition: opacity 0.2s, color 0.2s, transform 0.1s;
-}
-.gm-queue-btn:hover { opacity: 1; }
-.gm-queue-btn.gm-queue-active {
-  color: #F2C063;
-  opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(242,192,99,0.65));
-}
-.gm-queue-btn:disabled { cursor: not-allowed; opacity: 0.3; }
-
-.goal-delete {
-  border: 0; background: transparent;
-  color: var(--text-tertiary);
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0 4px;
-  opacity: 0.5;
-  transition: opacity 0.2s, color 0.2s;
-}
-.gm-row:hover .goal-delete { opacity: 1; }
-.goal-delete:hover { color: var(--danger); }
-
-.gm-show-toggle {
-  width: 100%;
-  margin: 6px 0 0;
-  padding: 9px;
-  border: 1px dashed rgba(255,255,255,0.12);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text-tertiary);
-  font-family: inherit;
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
-}
-.gm-show-toggle:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.22); }
-
-.gm-push-btn {
-  width: 100%;
-  margin-top: 14px;
-  padding: 11px;
-  border: 1px dashed rgba(255,255,255,0.16);
-  border-radius: 12px;
-  background: transparent;
-  color: var(--text-tertiary);
-  font-family: inherit;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.10em; text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
-}
-.gm-push-btn:hover {
-  color: var(--text-primary);
-  border-color: rgba(255,255,255,0.30);
-  border-style: solid;
-  background: rgba(255,255,255,0.04);
-}
-
-.goal-input-wrap.gm-input-wrap {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-.gm-input {
-  flex: 1; min-width: 0;
-  padding: 11px 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  background: rgba(0,0,0,0.28);
-  color: var(--text-primary);
-  font-family: inherit; font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, background 0.2s;
-}
-.gm-input::placeholder { color: var(--text-tertiary); }
-.gm-input:focus { border-color: rgba(255,255,255,0.28); background: rgba(0,0,0,0.36); }
-
-.gm-add {
-  padding: 11px 20px;
-  border: 0; border-radius: 12px;
-  background: linear-gradient(180deg, #FFFFFF 0%, #E8E5DD 100%);
-  color: #0A0A0B;
-  font-family: inherit; font-size: 13px; font-weight: 700;
-  cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    0 2px 8px rgba(0,0,0,0.35),
-    0 8px 22px rgba(0,0,0,0.25);
-  transition: transform 0.1s, filter 0.15s;
-}
-.gm-add:hover { filter: brightness(1.06); transform: translateY(-1px); }
-.gm-add:active { transform: translateY(0); }
-
-.gm-polish {
-  padding: 11px 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 12px;
-  background: rgba(255,255,255,0.04);
-  color: var(--text-primary);
-  font-family: inherit; font-size: 13px; font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-}
-.gm-polish:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.18);
-}
-
-.gm-status {
-  flex-basis: 100%;
-  font-size: 11px;
-  color: var(--text-tertiary);
-  min-height: 14px;
-  margin-top: 4px;
-}
-.gm-status.gm-status-error { color: var(--danger); }
-
-@media (max-width: 480px) {
-  body { padding: max(20px, env(safe-area-inset-top)) 14px 50px; }
-  .gm-card { padding: 16px; }
-  .gm-progress-num { font-size: 36px; }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080604;--panel:#120e08;--panel2:#1a1510;
+  --gold:#c9a84c;--gold-l:#e8cc7a;--gold-d:#7a5f20;
+  --text:#e0cda0;--dim:#8a7550;--red:#8b1a1a;
+  --border:#3a2a18;--border2:#5a4028;--green:#2d5a1b;
+}
+body{background:var(--bg);color:var(--text);font-family:'Cinzel',Georgia,serif;min-height:100vh;background-image:radial-gradient(ellipse at top,#1a0e00 0%,#080604 60%)}
+#loading{display:flex;align-items:center;justify-content:center;height:100vh;font-size:1.2rem;color:var(--gold);letter-spacing:.12em}
+#header{background:linear-gradient(180deg,#1c0e00,#0d0900);border-bottom:2px solid var(--gold-d);padding:.9rem 1rem;text-align:center;position:relative}
+#header::before,#header::after{content:'⚜';position:absolute;top:50%;transform:translateY(-50%);color:var(--gold-d);font-size:1.3rem}
+#header::before{left:1.2rem}#header::after{right:1.2rem}
+.htitle{font-family:'Cinzel Decorative',cursive;font-size:1.25rem;color:var(--gold);letter-spacing:.12em;text-shadow:0 0 20px rgba(201,168,76,.4)}
+.hrank{font-size:.65rem;color:var(--dim);letter-spacing:.2em;margin-top:.2rem}
+#nav{display:flex;background:var(--panel);border-bottom:1px solid var(--border);overflow-x:auto}
+.ntab{flex:1;min-width:72px;padding:.65rem .4rem;text-align:center;font-size:.6rem;letter-spacing:.06em;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.ntab:hover{color:var(--gold)}.ntab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,.05)}
+#content{max-width:860px;margin:0 auto;padding:.875rem}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:1.1rem;margin-bottom:.875rem;position:relative}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-d),transparent)}
+.ptitle{font-size:.7rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem}
+.attr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.65rem}
+.acard{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:.875rem;position:relative;overflow:hidden}
+.acard::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gold-d)}
+.aname{font-size:.65rem;letter-spacing:.12em;color:var(--gold);margin-bottom:.15rem}
+.adesc{font-size:.55rem;color:var(--dim);margin-bottom:.6rem}
+.alevel{font-size:1.7rem;font-weight:700;color:var(--gold-l);line-height:1;margin-bottom:.4rem}
+.xbg{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.2rem}
+.xfill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:2px;transition:width .5s ease}
+.xtxt{font-size:.52rem;color:var(--dim)}
+.tbadges{margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.2rem}
+.tbadge{font-size:.48rem;background:rgba(201,168,76,.12);border:1px solid var(--gold-d);color:var(--gold);padding:.08rem .3rem;border-radius:2px;letter-spacing:.04em}
+.qi{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:.75rem .875rem;margin-bottom:.4rem;display:flex;align-items:center;gap:.75rem;transition:opacity .3s}
+.qi.done{opacity:.4}
+.qbtn{flex-shrink:0;width:26px;height:26px;border:1.5px solid var(--gold-d);background:transparent;color:var(--gold);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;border-radius:2px;font-family:'Cinzel',serif}
+.qbtn:hover:not(:disabled){background:rgba(201,168,76,.18)}.qbtn:disabled{border-color:var(--border);color:var(--dim);cursor:default}
+.qinfo{flex:1}.qname{font-size:.7rem;letter-spacing:.04em;color:var(--text);margin-bottom:.15rem}.qdesc{font-size:.57rem;color:var(--dim)}
+.qmeta{text-align:right;flex-shrink:0}.qxp{font-size:.62rem;color:var(--gold);white-space:nowrap}.qattr{font-size:.52rem;color:var(--dim);margin-top:.12rem}
+.shead{font-size:.6rem;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin:1rem 0 .45rem;display:flex;align-items:center;gap:.5rem}
+.shead::after{content:'';flex:1;height:1px;background:var(--border)}
+.ccard{background:var(--panel2);border:1px solid var(--border);border-radius:3px;margin-bottom:.65rem;overflow:hidden}
+.chdr{padding:.875rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
+.chdr:hover{background:rgba(201,168,76,.05)}
+.ctarea{flex:1}
+.cname{font-size:.75rem;letter-spacing:.07em;color:var(--gold-l);margin-bottom:.2rem}
+.cdesc{font-size:.57rem;color:var(--dim);margin-bottom:.4rem}
+.cpbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:180px;max-width:100%}
+.cpfill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold))}
+.ctog{color:var(--gold-d);font-size:1rem;margin-left:.875rem}
+.cchaps{border-top:1px solid var(--border);display:none}.cchaps.open{display:block}
+.chapitem{padding:.75rem .875rem;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:flex-start}
+.chapitem:last-child{border-bottom:none}.chapitem.cdone .chapname{color:var(--dim)}
+.chapbtn{flex-shrink:0;width:22px;height:22px;border:1.5px solid var(--gold-d);background:transparent;color:var(--gold);cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:all .2s;font-family:'Cinzel',serif}
+.chapbtn:hover:not(:disabled){background:rgba(201,168,76,.18)}.chapbtn:disabled{border-color:var(--border);color:var(--dim);cursor:default}
+.chapinfo{flex:1}.chapname{font-size:.67rem;letter-spacing:.04em;color:var(--text);margin-bottom:.25rem}
+.chapcontent{font-size:.58rem;color:var(--dim);line-height:1.65;font-family:Georgia,serif}
+.chapxp{font-size:.58rem;color:var(--gold);white-space:nowrap;flex-shrink:0}
+.dform{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.fg{display:flex;flex-direction:column;gap:.35rem}
+.fg label{font-size:.57rem;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.finput,.fsel{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:.67rem;padding:.45rem .65rem;border-radius:2px;outline:none;transition:border-color .2s}
+.finput:focus,.fsel:focus{border-color:var(--gold-d)}.fsel option{background:var(--panel)}
+.ffulll{grid-column:1/-1}
+.btn{background:transparent;border:1px solid var(--gold-d);color:var(--gold);font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;padding:.55rem 1.1rem;cursor:pointer;transition:all .2s;border-radius:2px;text-transform:uppercase}
+.btn:hover{background:rgba(201,168,76,.14)}
+.btnd{border-color:var(--red);color:#c0392b}.btnd:hover{background:rgba(139,26,26,.18)}
+.lentry{padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.62rem;color:var(--dim);display:flex;gap:.65rem;font-family:Georgia,serif}
+.lentry:last-child{border-bottom:none}.ltime{color:var(--gold-d);flex-shrink:0;font-family:'Cinzel',serif}
+.rbanner{text-align:center;padding:1.25rem;border:1px solid var(--gold-d);background:linear-gradient(135deg,var(--panel2),var(--panel));border-radius:4px;margin-bottom:.875rem;position:relative}
+.rtitle{font-family:'Cinzel Decorative',cursive;font-size:1.5rem;color:var(--gold);text-shadow:0 0 30px rgba(201,168,76,.45);letter-spacing:.1em}
+.rtxp{font-size:.6rem;color:var(--dim);letter-spacing:.15em;margin-top:.4rem}
+.dprog{margin-top:.65rem;max-width:280px;margin-left:auto;margin-right:auto}
+.dprogtxt{font-size:.57rem;color:var(--dim);margin-bottom:.35rem;letter-spacing:.08em}
+#notif{position:fixed;top:.875rem;right:.875rem;background:var(--panel);border:1px solid var(--gold-d);color:var(--gold);padding:.65rem .875rem;font-size:.67rem;letter-spacing:.04em;border-radius:3px;z-index:1000;transform:translateX(130%);transition:transform .3s;max-width:260px;font-family:'Cinzel',serif}
+#notif.show{transform:translateX(0)}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;text-align:center}
+.statval{font-size:1.5rem;color:var(--gold)}.statlbl{font-size:.55rem;color:var(--dim);letter-spacing:.1em;margin-top:.2rem}
+@media(max-width:560px){.attr-grid{grid-template-columns:repeat(2,1fr)}.dform{grid-template-columns:1fr}.htitle{font-size:.95rem}.statgrid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <h1 class="dash-title">Billy's Dashboard</h1>
-
-  <div class="ticker-row">
-    <div class="goal-ticker" id="goalTicker" aria-live="polite" aria-atomic="true">
-      <div class="goal-ticker-led"><span class="goal-ticker-led-dot"></span></div>
-      <div class="goal-ticker-label">GOALS</div>
-      <div class="goal-ticker-stage" id="goalTickerStage">
-        <div class="goal-ticker-row">
-          <span class="goal-ticker-status" data-status="">—</span>
-          <span class="goal-ticker-text">Loading…</span>
-        </div>
-      </div>
-      <div class="goal-ticker-meta" id="goalTickerMeta">0/0</div>
-    </div>
+<div id="notif"></div>
+<div id="saveind" style="position:fixed;bottom:.75rem;right:.875rem;font-family:'Cinzel',serif;font-size:.55rem;color:var(--gold-d);letter-spacing:.1em;opacity:0;transition:opacity .4s;pointer-events:none">⚜ Chronicle Saved</div>
+<div id="loading">⚜ Loading Thy Chronicles ⚜</div>
+<div id="app" style="display:none">
+  <div id="header">
+    <div class="htitle">The Chronicle of the Aspirant</div>
+    <div class="hrank" id="hrank">— — —</div>
   </div>
-
-  <div class="day-ring-wrap">
-    <div class="day-ring">
-      <svg viewBox="0 0 120 120">
-        <defs>
-          <filter id="dayRingGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.4" result="b" />
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <circle class="day-ring-track" cx="60" cy="60" r="52" />
-        <circle class="day-ring-fill"  cx="60" cy="60" r="52" id="dayRingFill" filter="url(#dayRingGlow)" />
-      </svg>
-      <div class="day-ring-overlay">
-        <div class="day-ring-percent" id="dayRingPercent">—</div>
-        <div class="day-ring-phase"   id="dayRingPhase">—</div>
-        <div class="day-ring-clock"   id="dayRingClock">—</div>
-      </div>
-    </div>
-    <div class="day-ring-text">
-      <div class="day-ring-status"    id="dayRingStatus">Loading…</div>
-      <div class="day-ring-remaining" id="dayRingRemaining">—</div>
-      <div class="day-ring-hours">8:00 AM – 12:00 AM</div>
-    </div>
+  <div id="nav">
+    <div class="ntab active" onclick="sw('chronicle')" id="tab-chronicle">⚜ Chronicle</div>
+    <div class="ntab" onclick="sw('quests')" id="tab-quests">⚔ Quests</div>
+    <div class="ntab" onclick="sw('tomes')" id="tab-tomes">📜 Tomes</div>
+    <div class="ntab" onclick="sw('decrees')" id="tab-decrees">👑 Decrees</div>
+    <div class="ntab" onclick="sw('log')" id="tab-log">📖 Scroll</div>
   </div>
-
-  <div class="section">
-    <div class="section-title">To Do List</div>
-
-    <!-- TODAY -->
-    <div class="gm-card" id="gmCardToday">
-      <div class="gm-header">
-        <div class="gm-header-left">
-          <div class="gm-eyebrow" id="todayLabel">Today —</div>
-          <div class="gm-progress-row">
-            <span class="gm-progress-num"   id="gmProgressNum">0</span>
-            <span class="gm-progress-total" id="gmProgressTotal">/ 0</span>
-            <span class="gm-progress-label" id="gmProgressLabel">no goals yet</span>
-          </div>
-        </div>
-        <div class="gm-streak" id="gmStreak">
-          <span class="gm-streak-icon">⚡</span>
-          <span class="gm-streak-num" id="gmStreakNum">0</span>
-          <span>day streak</span>
-        </div>
-      </div>
-      <div class="gm-bar" id="gmBar"></div>
-      <ul id="goalList" class="goal-list gm-list"></ul>
-      <div id="emptyState" class="empty-state">No goals for today yet — add one below.</div>
-      <button type="button" id="gmPushBtn" class="gm-push-btn" style="display:none;">Push remaining to tomorrow</button>
-      <div class="goal-input-wrap gm-input-wrap">
-        <input id="goalInput" class="gm-input" type="text" placeholder="Add a goal for today…" autocomplete="off">
-        <button type="button" id="goalAddBtn"    class="gm-add">+ Add</button>
-        <button type="button" id="goalPolishBtn" class="gm-polish">✨ Polish</button>
-        <div class="gm-status" id="polishStatus"></div>
-      </div>
-    </div>
-
-    <!-- PLAN TOMORROW -->
-    <div class="gm-card gm-card-tomorrow" id="gmCardTomorrow">
-      <div class="gm-header">
-        <div class="gm-header-left">
-          <div class="gm-eyebrow" id="tomorrowLabel">Plan tomorrow —</div>
-          <div class="gm-tomorrow-sub">Write tonight, locked until 6 AM.</div>
-        </div>
-        <div class="gm-tomorrow-count" id="gmTomorrowCount">0 planned</div>
-      </div>
-      <ul id="tomorrowList" class="goal-list gm-list"></ul>
-      <div id="tomorrowEmpty" class="empty-state">Nothing planned for tomorrow yet</div>
-      <div class="goal-input-wrap gm-input-wrap">
-        <input id="tomorrowInput" class="gm-input" type="text" placeholder="Add a goal for tomorrow…" autocomplete="off">
-        <button type="button" id="tomorrowAddBtn"    class="gm-add">+ Add</button>
-        <button type="button" id="tomorrowPolishBtn" class="gm-polish">✨ Polish</button>
-        <div class="gm-status" id="tomorrowStatus"></div>
-      </div>
-    </div>
-  </div>
-
+  <div id="content"></div>
 </div>
 
 <script>
-(function () {
-  'use strict';
-
-  // Paste your Anthropic key here to enable ✨ Polish. Empty = falls back to plain add.
-  const ANTHROPIC_API_KEY = '';
-
-  const WAKE_HOUR  = 8;
-  const SLEEP_HOUR = 24;
-
-  // ---------- storage helpers ----------
-  function storeGet(key) {
-    try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
-  }
-  function storeSet(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
-    if (typeof key === 'string' && key.indexOf('goals:') === 0) {
-      window.dispatchEvent(new CustomEvent('goals-changed'));
+// localStorage fallback for window.storage
+if (!window.storage) {
+  window.storage = {
+    get: async function(key) {
+      try { var v = localStorage.getItem(key); return v ? { value: v } : null; } catch(e) { return null; }
+    },
+    set: async function(key, value) {
+      try { localStorage.setItem(key, value); } catch(e) {}
     }
-  }
-  function storeDelete(key) { try { localStorage.removeItem(key); } catch (e) {} }
-  function storeListKeys(prefix) {
-    const out = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.indexOf(prefix) === 0) out.push(k);
-    }
-    return out;
-  }
+  };
+}
 
-  // ---------- date helpers ----------
-  function pad2(n) { return String(n).padStart(2, '0'); }
-  function dateToKey(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
-  function getActiveDateString() {
-    const now = new Date();
-    if (now.getHours() < 6) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - 1);
-      return dateToKey(d);
-    }
-    return dateToKey(now);
-  }
-  function getTomorrowDateString() {
-    const now = new Date();
-    const d = new Date(now);
-    if (now.getHours() >= 6) d.setDate(d.getDate() + 1);
-    return dateToKey(d);
-  }
-  function formatDate(yyyy_mm_dd) {
-    const parts = yyyy_mm_dd.split('-').map(Number);
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
-    const wk = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
-    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-    return wk + ', ' + mo + ' ' + d.getDate();
-  }
+const AN={diplomacy:'Diplomacy',martial:'Martial',stewardship:'Stewardship',learning:'Learning',intrigue:'Intrigue'};
+const AD={diplomacy:'Social Skills',martial:'Fitness & Strength',stewardship:'Attractiveness & Grooming',learning:'Languages & Knowledge',intrigue:'Mindset & Confidence'};
+const AI={diplomacy:'🤝',martial:'⚔️',stewardship:'✨',learning:'📚',intrigue:'🧠'};
+const TRAITS={
+  diplomacy:[{l:3,n:"Courteous"},{l:5,n:"Silver-Tongued"},{l:8,n:"Orator"},{l:12,n:"Grand Diplomat"},{l:16,n:"Envoy Royal"},{l:20,n:"The Charmer"}],
+  martial:[{l:3,n:"Trained"},{l:5,n:"Iron-Willed"},{l:8,n:"Warrior"},{l:12,n:"Champion"},{l:16,n:"War Hero"},{l:20,n:"The Ironclad"}],
+  stewardship:[{l:3,n:"Well-Groomed"},{l:5,n:"Comely"},{l:8,n:"Handsome"},{l:12,n:"Dashing"},{l:16,n:"Resplendent"},{l:20,n:"The Radiant"}],
+  learning:[{l:3,n:"Literate"},{l:5,n:"Scholar"},{l:8,n:"Polyglot"},{l:12,n:"Sage"},{l:16,n:"Grand Academician"},{l:20,n:"The Wise"}],
+  intrigue:[{l:3,n:"Cunning"},{l:5,n:"Scheming"},{l:8,n:"Manipulator"},{l:12,n:"Shadowmaster"},{l:16,n:"Spymaster"},{l:20,n:"The Architect"}]
+};
+const QUESTS=[
+  {id:'q1',name:"Train in the Yard",desc:"Complete thy workout for the day",attr:'martial',xp:40,type:'daily'},
+  {id:'q2',name:"Study the Iberian Tongue",desc:"Practice Portuguese for 20 minutes",attr:'learning',xp:35,type:'daily'},
+  {id:'q3',name:"Practice Courtly Speech",desc:"Engage a stranger in meaningful conversation",attr:'diplomacy',xp:30,type:'daily'},
+  {id:'q4',name:"Tend to Thy Appearance",desc:"Complete thy full grooming and skincare ritual",attr:'stewardship',xp:25,type:'daily'},
+  {id:'q5',name:"Meditate on Thy Purpose",desc:"Spend 10 minutes in quiet reflection",attr:'intrigue',xp:25,type:'daily'},
+  {id:'q6',name:"The Iron Covenant",desc:"Complete 4 training sessions this week",attr:'martial',xp:150,type:'weekly'},
+  {id:'q7',name:"The Scholar's Vigil",desc:"Complete 5 Portuguese lessons this week",attr:'learning',xp:120,type:'weekly'},
+  {id:'q8',name:"The Social Campaign",desc:"Attend a social gathering or meet new people",attr:'diplomacy',xp:100,type:'weekly'},
+  {id:'q9',name:"The Grand Presentation",desc:"Try a new grooming or style improvement this week",attr:'stewardship',xp:80,type:'weekly'},
+  {id:'q10',name:"The Mind's Fortress",desc:"Journal thy thoughts for 3 days this week",attr:'intrigue',xp:80,type:'weekly'},
+];
+const COURSES=[
+  {id:'c1',name:"The Art of Conversation",attr:'diplomacy',desc:"Master the ancient art of courtly discourse and social command",chapters:[
+    {id:'c1_1',name:"The First Impression",content:"The fundamentals of powerful first impressions: eye contact, open posture, confident tone, and the disarming opening gambit. These are thy weapons before a single word of substance is spoken.",xp:60},
+    {id:'c1_2',name:"The Art of Listening",content:"A true diplomat speaks less and hears more. Master active listening — genuine interest, remembering names, asking follow-up questions. Make others feel heard and they shall trust thee.",xp:60},
+    {id:'c1_3',name:"The Storyteller's Craft",content:"Captivate thine audience with compelling stories. Learn structure (situation, conflict, resolution), timing, and delivery. A well-told tale is worth a thousand facts.",xp:75},
+    {id:'c1_4',name:"The Body Speaks",content:"Non-verbal communication conveys more than words. Posture, mirroring, gestures, and expression — learn to read others and project confidence through thy very bearing.",xp:75},
+    {id:'c1_5',name:"The Art of Persuasion",content:"Bend others to thy will through three pillars: logos (logic), ethos (credibility), pathos (emotion). Present thy case in the order that serves thee best.",xp:100},
+  ]},
+  {id:'c2',name:"Forging the Body",attr:'martial',desc:"Transform thy physical form into a weapon worthy of a Duke",chapters:[
+    {id:'c2_1',name:"The Foundation",content:"Progressive overload, compound movements, and consistency — the three immutable laws of physical transformation. Without these, all else is folly.",xp:60},
+    {id:'c2_2',name:"The Warrior's Feast",content:"Nutrition is the forge. Caloric balance, protein at 0.8–1g per lb bodyweight, and fuelling training without excess. The physique is built in the kitchen as much as the yard.",xp:60},
+    {id:'c2_3',name:"Strength & Power",content:"The great lifts: squat, bench press, deadlift, overhead press. Master these compound movements and thy body shall follow. Form first, weight second, always.",xp:75},
+    {id:'c2_4',name:"The Endurance Trial",content:"Cardiovascular conditioning — the forgotten weapon. Zone 2 cardio, intervals, and HIIT each serve a purpose. Build thy engine alongside thy armour.",xp:75},
+    {id:'c2_5',name:"Recovery & Restoration",content:"The battle is won between sessions. Sleep 7–9 hours, eat sufficient protein, take rest days. Muscles are built during recovery, not training. Honour the rest as much as the work.",xp:100},
+  ]},
+  {id:'c3',name:"The Iberian Tongue",attr:'learning',desc:"Master the language of Portugal — open new kingdoms to thy ambitions",chapters:[
+    {id:'c3_1',name:"The Alphabet & Sounds",content:"Portuguese pronunciation: nasal vowels (ão, em, im), the 'lh' and 'nh' sounds, and the swallowed vowels of European Portuguese. Spend time on audio resources — the sounds must be heard to be learned.",xp:60},
+    {id:'c3_2',name:"Greetings & Courtesies",content:"Olá, Bom dia, Boa tarde, Como estás? (informal) / Como está? (formal), Tudo bem?, Muito prazer. Master the essential greetings and polite phrases that open every door.",xp:60},
+    {id:'c3_3',name:"Numbers & Time",content:"Zero to one hundred, ordinals, days of the week, months, and telling the time. These form the currency of basic daily communication — shop, schedule, and navigate.",xp:60},
+    {id:'c3_4',name:"The Present Kingdom",content:"Present tense conjugation for essential verbs: ser, estar, ter, fazer, ir, querer, poder, saber. Learn the -ar, -er, -ir verb patterns — the backbone of daily speech.",xp:75},
+    {id:'c3_5',name:"The Past Chronicle",content:"Speak of deeds done. Preterite (pretérito perfeito) for completed actions; imperfect (pretérito imperfeito) for ongoing past states. Era vs. foi, tinha vs. tive — master this distinction.",xp:75},
+    {id:'c3_6',name:"Phrases of the Realm",content:"Essential survival phrases: finding places, ordering food, asking prices, handling emergencies, and expressing opinions. The toolkit that carries thee through real-world encounters.",xp:100},
+  ]},
+  {id:'c4',name:"The Art of Presentation",attr:'stewardship',desc:"Command any room through mastery of appearance and physical presence",chapters:[
+    {id:'c4_1',name:"The Skin as Armour",content:"A proper skincare routine: cleanse morning and evening, moisturise, SPF 30+ every single morning without exception. Address specific concerns — dark circles, texture, oiliness — with targeted actives.",xp:60},
+    {id:'c4_2',name:"The Grooming Rites",content:"Hair: find a style that suits thy face shape and maintain it. Beard: define the neckline, keep it shaped. Body: nails, nose hair, fragrance. The details mark the nobleman from the commoner.",xp:60},
+    {id:'c4_3',name:"The Garments of Power",content:"Fit is king — tailored clothes at any price beat expensive but ill-fitting garments. Learn the colour wheel, build a versatile neutral wardrobe, and dress one level above the occasion.",xp:75},
+    {id:'c4_4',name:"The Posture of Kings",content:"Shoulders back, chin level, chest open. Move with deliberate purpose rather than haste. Good posture is free and adds perceived height, confidence, and authority instantly.",xp:75},
+    {id:'c4_5',name:"The Complete Sovereign",content:"Combine all elements into daily and weekly routines. The morning ritual, the weekly maintenance, the outfit formula. Consistency over perfection — the lord who shows up daily beats one who prepares for hours occasionally.",xp:100},
+  ]},
+  {id:'c5',name:"The Warlord's Mind",attr:'intrigue',desc:"Forge an unbreakable mental fortress and the mindset of a conqueror",chapters:[
+    {id:'c5_1',name:"The Champion's Mindset",content:"Fixed mindset says talent is innate; growth mindset says ability is earned. Every great lord was once a beginner. Embrace difficulty as the forge that creates thee, not the obstacle that stops thee.",xp:60},
+    {id:'c5_2',name:"The Discipline Covenant",content:"Discipline is freedom. Build systems and habits so excellence becomes the path of least resistance. Habit stacking, environment design, and removing friction from virtuous behaviours.",xp:60},
+    {id:'c5_3',name:"The War Council",content:"Clarity of purpose is power. Set long-term ambitions (1–5 years), break them into quarterly campaigns, weekly missions, and daily tasks. Review weekly. Adjust monthly. Never lose sight of the throne.",xp:75},
+    {id:'c5_4',name:"Mastery of Emotion",content:"Stoic principles: distinguish what is within thy control from what is not. Respond rather than react. Practise the pause. Journalling, breathwork, and reflection are tools of the emotionally sovereign lord.",xp:75},
+    {id:'c5_5',name:"Unshakeable Confidence",content:"Confidence is built through evidence — through keeping promises to thyself, facing fears in small increments, and accumulating proof of thy own capability. Action precedes feeling. Begin, and confidence shall follow.",xp:100},
+  ]},
+];
 
-  function todayKey()    { return 'goals:' + getActiveDateString(); }
-  function tomorrowKey() { return 'goals:' + getTomorrowDateString(); }
+// ── STATE ──────────────────────────────────────────────────────────────────
+function today(){return new Date().toDateString()}
+function weekStart(){const d=new Date();d.setDate(d.getDate()-d.getDay());return d.toDateString()}
+const DS=()=>({
+  attributes:{
+    diplomacy:{level:1,xp:0,totalXP:0,unlockedTraits:[]},
+    martial:{level:1,xp:0,totalXP:0,unlockedTraits:[]},
+    stewardship:{level:1,xp:0,totalXP:0,unlockedTraits:[]},
+    learning:{level:1,xp:0,totalXP:0,unlockedTraits:[]},
+    intrigue:{level:1,xp:0,totalXP:0,unlockedTraits:[]},
+  },
+  completedDaily:[],completedWeekly:[],completedChapters:[],
+  decrees:[],completedDecrees:[],log:[],
+  lastDaily:today(),lastWeekly:weekStart(),openCourses:[]
+});
 
-  function getGoals(key) {
-    const g = storeGet(key);
-    return Array.isArray(g) ? g : [];
-  }
-  function setGoals(key, list) { storeSet(key, list); }
+let S=DS(),curTab='chronicle';
 
-  // ---------- rollover: pull undone older goals into today ----------
-  function rollover() {
-    const todayDateStr = getActiveDateString();
-    const todayK = 'goals:' + todayDateStr;
-    let today = getGoals(todayK);
-    const texts = new Set(today.map(g => g.text));
+// ── XP ─────────────────────────────────────────────────────────────────────
+function xpNeeded(lv){return lv*300}
+function totalXP(){return Object.values(S.attributes).reduce((s,a)=>s+(a.totalXP||0),0)}
+const RANKS=[
+  {name:'Mayor',   min:0,     next:800},
+  {name:'Baron',   min:800,   next:3000},
+  {name:'Earl',    min:3000,  next:10000},
+  {name:'Duke',    min:10000, next:28000},
+  {name:'King',    min:28000, next:80000},
+  {name:'Emperor', min:80000, next:null},
+];
+function getRankObj(){
+  const tx=totalXP();
+  for(let i=RANKS.length-1;i>=0;i--){if(tx>=RANKS[i].min)return{...RANKS[i],tx}}
+  return{...RANKS[0],tx};
+}
+function rank(){return getRankObj().name}
 
-    storeListKeys('goals:').forEach(k => {
-      const dateStr = k.slice('goals:'.length);
-      if (dateStr >= todayDateStr) return;
-      const old = getGoals(k);
-      old.forEach(g => {
-        if (!g.done && g.text && !texts.has(g.text)) {
-          today.push({ text: g.text, done: false });
-          texts.add(g.text);
-        }
-      });
-      storeDelete(k);
-    });
-    setGoals(todayK, today);
-  }
-
-  // ---------- streak ----------
-  function loadStreak() {
-    const s = storeGet('goal_streak_v1');
-    if (s && typeof s.count === 'number') return s;
-    return { count: 0, lastProcessedDate: '' };
-  }
-  function saveStreak(s) { storeSet('goal_streak_v1', s); }
-
-  function processStreak() {
-    const s = loadStreak();
-    const todayDateStr = getActiveDateString();
-    const keys = storeListKeys('goals:')
-      .map(k => k.slice('goals:'.length))
-      .filter(d => d < todayDateStr)
-      .sort();
-    keys.forEach(dateStr => {
-      if (s.lastProcessedDate && dateStr <= s.lastProcessedDate) return;
-      const list = getGoals('goals:' + dateStr);
-      if (list.length === 0) { /* don't break the streak on empty days */ }
-      else if (list.every(g => g.done)) s.count += 1;
-      else s.count = 0;
-      s.lastProcessedDate = dateStr;
-    });
-    saveStreak(s);
-  }
-
-  // ---------- Goal Ticker ----------
-  const tickerStage = document.getElementById('goalTickerStage');
-  const tickerMeta  = document.getElementById('goalTickerMeta');
-  let cycleIdx = 0;
-  let tickerTimer = null;
-
-  function buildTickerItems() {
-    const goals = getGoals(todayKey());
-    const total = goals.length;
-    const done  = goals.filter(g => g.done).length;
-    if (total === 0) return { items: [{ status: 'empty',   text: 'No goals set for today — add one to get rolling.' }], done, total };
-    if (done === total) return { items: [{ status: 'done', text: '✓ All goals done — solid day.' }], done, total };
-    const items = goals.filter(g => !g.done).map(g => ({ status: 'pending', text: g.text }));
-    return { items, done, total };
-  }
-
-  function statusGlyph(status) {
-    if (status === 'done') return '✓';
-    if (status === 'pending') return '○';
-    return '·';
-  }
-
-  let firstTick = true;
-  function tick() {
-    const { items, done, total } = buildTickerItems();
-    if (cycleIdx >= items.length) cycleIdx = 0;
-    const item = items[cycleIdx];
-    cycleIdx = (cycleIdx + 1) % items.length;
-
-    const oldRow = tickerStage.querySelector('.goal-ticker-row');
-    const newRow = document.createElement('div');
-    newRow.className = 'goal-ticker-row';
-    const status = document.createElement('span');
-    status.className = 'goal-ticker-status';
-    status.setAttribute('data-status', item.status);
-    status.textContent = statusGlyph(item.status);
-    const text = document.createElement('span');
-    text.className = 'goal-ticker-text';
-    text.textContent = item.text;
-    newRow.appendChild(status);
-    newRow.appendChild(text);
-
-    if (oldRow && !firstTick) {
-      oldRow.classList.add('is-leaving');
-      setTimeout(() => oldRow.remove(), 460);
-      newRow.classList.add('is-entering');
-    } else if (oldRow) {
-      oldRow.remove();
-    }
-    tickerStage.appendChild(newRow);
-    firstTick = false;
-
-    tickerMeta.textContent = done + '/' + total;
-  }
-
-  function startTicker() {
-    tick();
-    if (tickerTimer) clearInterval(tickerTimer);
-    tickerTimer = setInterval(tick, 5000);
-  }
-
-  window.addEventListener('goals-changed', () => {
-    cycleIdx = 0;
-    tick();
+function addXP(attr,amt,src){
+  const a=S.attributes[attr];
+  a.xp+=amt;a.totalXP=(a.totalXP||0)+amt;
+  while(a.xp>=xpNeeded(a.level)){a.xp-=xpNeeded(a.level);a.level++;log(`⚔ Thy ${AN[attr]} hath reached Level ${a.level}!`)}
+  let nt=[];
+  TRAITS[attr].forEach(t=>{
+    if(a.level>=t.l&&!a.unlockedTraits.includes(t.n)){a.unlockedTraits.push(t.n);nt.push(t.n);log(`👑 Trait unlocked: "${t.n}"!`)}
   });
+  log(`${src} +${amt} ${AN[attr]} XP`);
+  if(nt.length)notif(`👑 Trait Unlocked: ${nt.join(', ')}!`);
+}
 
-  // ---------- Day Ring ----------
-  const PALETTE = [
-    [0,    [255, 216, 158]],
-    [12.5, [255, 205, 121]],
-    [25,   [255, 227, 143]],
-    [37.5, [255, 183, 106]],
-    [50,   [255, 149,  89]],
-    [62.5, [243, 111,  79]],
-    [75,   [226,  93, 122]],
-    [87.5, [123,  91, 176]],
-    [100,  [ 47,  58, 102]]
-  ];
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function paletteAt(p) {
-    if (p <= PALETTE[0][0]) return PALETTE[0][1];
-    if (p >= PALETTE[PALETTE.length - 1][0]) return PALETTE[PALETTE.length - 1][1];
-    for (let i = 0; i < PALETTE.length - 1; i++) {
-      const [p0, c0] = PALETTE[i];
-      const [p1, c1] = PALETTE[i + 1];
-      if (p >= p0 && p <= p1) {
-        const t = (p - p0) / (p1 - p0);
-        return [lerp(c0[0], c1[0], t), lerp(c0[1], c1[1], t), lerp(c0[2], c1[2], t)];
-      }
-    }
-    return [255,255,255];
+function log(txt){
+  const d=new Date();
+  const t=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  S.log.unshift({txt,t});if(S.log.length>120)S.log=S.log.slice(0,120);
+}
+
+async function save(){
+  try{
+    await window.storage.set('ck3life_v3',JSON.stringify(S));
+    const el=document.getElementById('saveind');
+    if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1200)}
+  }catch(e){console.error('Save failed:',e);notif('⚠ Save failed — storage unavailable')}
+}
+
+// ── NOTIF ──────────────────────────────────────────────────────────────────
+let ntTimer;
+function notif(msg){
+  const el=document.getElementById('notif');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(ntTimer);ntTimer=setTimeout(()=>el.classList.remove('show'),3400);
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function sw(tab){
+  curTab=tab;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  render();
+}
+
+// ── ACTIONS ────────────────────────────────────────────────────────────────
+function completeQuest(id,type){
+  const q=QUESTS.find(x=>x.id===id);if(!q)return;
+  if(type==='daily')S.completedDaily.push(id);else S.completedWeekly.push(id);
+  addXP(q.attr,q.xp,`📜 "${q.name}":`);
+  save();notif(`⚔ Quest Complete: ${q.name}!`);render();
+}
+function completeDecree(id){
+  const d=S.decrees.find(x=>x.id===id);if(!d)return;
+  S.completedDecrees.push(id);
+  addXP(d.attr,d.xp,`👑 Decree "${d.name}":`);
+  save();notif(`👑 Decree Fulfilled: ${d.name}!`);render();
+}
+function deleteDecree(id){
+  S.decrees=S.decrees.filter(d=>d.id!==id);
+  S.completedDecrees=S.completedDecrees.filter(x=>x!==id);
+  save();render();
+}
+function completeChapter(cid,coid){
+  const course=COURSES.find(c=>c.id===coid);
+  const ch=course?.chapters.find(c=>c.id===cid);if(!ch)return;
+  S.completedChapters.push(cid);
+  addXP(course.attr,ch.xp,`📖 "${ch.name}":`);
+  save();notif(`📖 Chapter Complete: ${ch.name}!`);render();
+}
+function toggleCourse(id){
+  if(S.openCourses.includes(id))S.openCourses=S.openCourses.filter(x=>x!==id);
+  else S.openCourses.push(id);
+  render();
+}
+function addDecree(){
+  const name=document.getElementById('dn').value.trim();
+  const attr=document.getElementById('da').value;
+  const xp=parseInt(document.getElementById('dx').value);
+  const type=document.getElementById('dt').value;
+  if(!name||!attr||isNaN(xp)||xp<5){notif('⚠ Fill all fields. XP must be at least 5.');return}
+  S.decrees.push({id:'d'+Date.now(),name,attr,xp:Math.min(xp,500),type});
+  save();notif('👑 Decree Issued!');
+  document.getElementById('dn').value='';
+  document.getElementById('dx').value='';
+  render();
+}
+function clearLog(){if(!confirm('Clear the Chronicle Scroll? This cannot be undone.'))return;S.log=[];save();render()}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById('hrank').textContent=`— ${rank()} of the Aspirant's Realm —`;
+  const c=document.getElementById('content');
+  switch(curTab){
+    case'chronicle':c.innerHTML=rChronicle();break;
+    case'quests':c.innerHTML=rQuests();break;
+    case'tomes':c.innerHTML=rTomes();break;
+    case'decrees':c.innerHTML=rDecrees();break;
+    case'log':c.innerHTML=rLog();break;
   }
-  function rgb(c) { return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')'; }
+}
 
-  function formatClock(d) {
-    let h = d.getHours();
-    const m = d.getMinutes();
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12;
-    if (h === 0) h = 12;
-    return h + ':' + pad2(m) + ' ' + ampm;
+function rChronicle(){
+  const ro=getRankObj(),tx=ro.tx,r=ro.name;
+  let rankBar='';
+  if(ro.next){
+    const from=ro.min,to=ro.next,pct=Math.min(100,Math.round((tx-from)/(to-from)*100));
+    const nextName=RANKS[RANKS.findIndex(x=>x.name===r)+1]?.name||'';
+    rankBar=`<div class="dprog">
+      <div class="dprogtxt">${(tx-from).toLocaleString()} / ${(to-from).toLocaleString()} XP towards ${nextName}</div>
+      <div class="xbg"><div class="xfill" style="width:${pct}%"></div></div>
+    </div>`;
+  } else {
+    rankBar=`<div style="color:var(--gold);font-size:.65rem;margin-top:.5rem;letter-spacing:.1em">⚜ The Realm bows before thee ⚜</div>`;
   }
-  function formatRemaining(totalMin) {
-    const h = Math.floor(totalMin / 60);
-    const m = Math.floor(totalMin % 60);
-    return h + 'h ' + m + 'm';
-  }
-
-  const C = 2 * Math.PI * 52;
-  const fillEl = document.getElementById('dayRingFill');
-  fillEl.setAttribute('stroke-dasharray', C);
-  fillEl.setAttribute('stroke-dashoffset', C);
-
-  function updateDayRing() {
-    const now = new Date();
-    const hours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-    const percentEl   = document.getElementById('dayRingPercent');
-    const phaseEl     = document.getElementById('dayRingPhase');
-    const clockEl     = document.getElementById('dayRingClock');
-    const statusEl    = document.getElementById('dayRingStatus');
-    const remainingEl = document.getElementById('dayRingRemaining');
-
-    clockEl.textContent = formatClock(now);
-
-    if (hours < WAKE_HOUR) {
-      fillEl.setAttribute('stroke-dashoffset', C);
-      fillEl.style.stroke = '#4D4B47';
-      percentEl.textContent = '—';
-      phaseEl.textContent   = 'SLEEPING';
-      statusEl.textContent  = '😴 Still sleeping';
-      const minsUntil = (WAKE_HOUR - hours) * 60;
-      remainingEl.textContent = formatRemaining(minsUntil) + ' until wake-up';
-      return;
-    }
-
-    if (hours >= SLEEP_HOUR) {
-      fillEl.setAttribute('stroke-dashoffset', 0);
-      fillEl.style.stroke = '#E25D7A';
-      percentEl.textContent = '100%';
-      phaseEl.textContent   = 'PAST BEDTIME';
-      statusEl.textContent  = '⚠️ Past bedtime';
-      remainingEl.textContent = 'Sleep!';
-      return;
-    }
-
-    const span = SLEEP_HOUR - WAKE_HOUR;
-    const percent = (hours - WAKE_HOUR) / span * 100;
-    fillEl.setAttribute('stroke-dashoffset', C * (1 - percent / 100));
-    fillEl.style.stroke = rgb(paletteAt(percent));
-    percentEl.textContent = Math.floor(percent) + '%';
-
-    let phase, status;
-    if (percent < 25)      { phase = 'MORNING';   status = '☀️ Morning — fresh start'; }
-    else if (percent < 50) { phase = 'MIDDAY';    status = '⚡ Midday — keep moving'; }
-    else if (percent < 75) { phase = 'AFTERNOON'; status = '🔥 Afternoon — push it'; }
-    else if (percent < 90) { phase = 'EVENING';   status = '⏳ Evening — wrap up'; }
-    else                   { phase = 'BEDTIME';   status = '🌙 Bedtime soon'; }
-    phaseEl.textContent  = phase;
-    statusEl.textContent = status;
-
-    const minsLeft = (SLEEP_HOUR - hours) * 60;
-    remainingEl.textContent = formatRemaining(minsLeft) + ' awake time left';
-  }
-
-  // ---------- Row building ----------
-  function makeInlineEdit(textEl, goals, idx, key, reload) {
-    textEl.addEventListener('click', () => {
-      if (textEl.getAttribute('contenteditable') === 'true') return;
-      const original = textEl.textContent;
-      textEl.setAttribute('contenteditable', 'true');
-      textEl.focus();
-      const range = document.createRange();
-      range.selectNodeContents(textEl);
-      range.collapse(false);
-      const sel = window.getSelection();
-      sel.removeAllRanges(); sel.addRange(range);
-
-      function commit() {
-        const next = textEl.textContent.trim();
-        textEl.removeAttribute('contenteditable');
-        if (next && next !== original) {
-          const list = getGoals(key);
-          if (list[idx]) { list[idx].text = next; setGoals(key, list); }
-          reload();
-        } else {
-          textEl.textContent = original;
-        }
-      }
-      function cancel() {
-        textEl.removeAttribute('contenteditable');
-        textEl.textContent = original;
-      }
-      textEl.addEventListener('blur', commit, { once: true });
-      textEl.addEventListener('keydown', function onKey(e) {
-        if (e.key === 'Enter') { e.preventDefault(); textEl.removeEventListener('keydown', onKey); textEl.blur(); }
-        else if (e.key === 'Escape') { e.preventDefault(); textEl.removeEventListener('keydown', onKey); cancel(); }
-      });
-    });
-  }
-
-  function wireDragReorder(row, listEl, key, reload) {
-    row.setAttribute('draggable', 'true');
-    row.addEventListener('dragstart', (e) => {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', row.dataset.idx);
-    });
-    row.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      row.classList.add('is-drag-over');
-    });
-    row.addEventListener('dragleave', () => row.classList.remove('is-drag-over'));
-    row.addEventListener('drop', (e) => {
-      e.preventDefault();
-      row.classList.remove('is-drag-over');
-      const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
-      const to   = parseInt(row.dataset.idx, 10);
-      if (isNaN(from) || isNaN(to) || from === to) return;
-      const list = getGoals(key);
-      const [moved] = list.splice(from, 1);
-      list.splice(to, 0, moved);
-      setGoals(key, list);
-      reload();
-    });
-  }
-
-  function buildGoalRow(goal, idx, key, readOnly, reload) {
-    const li = document.createElement('li');
-    li.className = 'gm-row';
-    li.dataset.idx = String(idx);
-    if (goal.done) li.classList.add('gm-row-done');
-    if (goal.queued) li.classList.add('gm-row-queued');
-
-    const handle = document.createElement('span');
-    handle.className = 'gm-handle';
-    handle.textContent = '⋮⋮';
-    li.appendChild(handle);
-
-    const cb = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.className = 'gm-check';
-    cb.checked = !!goal.done;
-    if (readOnly) { cb.disabled = true; cb.title = 'Activates at 6 AM tomorrow'; }
-    cb.addEventListener('change', () => {
-      const list = getGoals(key);
-      if (!list[idx]) return;
-      list[idx].done = cb.checked;
-      if (cb.checked) list[idx].doneAt = Date.now();
-      else delete list[idx].doneAt;
-      setGoals(key, list);
-      reload();
-    });
-    li.appendChild(cb);
-
-    const text = document.createElement('span');
-    text.className = 'gm-text';
-    text.textContent = goal.text;
-    li.appendChild(text);
-    makeInlineEdit(text, null, idx, key, reload);
-
-    const queueBtn = document.createElement('button');
-    queueBtn.type = 'button';
-    queueBtn.className = 'gm-queue-btn' + (goal.queued ? ' gm-queue-active' : '');
-    queueBtn.textContent = '⚡';
-    queueBtn.title = 'Queue for productivity window';
-    if (readOnly) queueBtn.disabled = true;
-    queueBtn.addEventListener('click', () => {
-      const list = getGoals(key);
-      if (!list[idx]) return;
-      list[idx].queued = !list[idx].queued;
-      setGoals(key, list);
-      li.classList.add('is-queue-flashing');
-      setTimeout(reload, 480);
-    });
-    li.appendChild(queueBtn);
-
-    const del = document.createElement('button');
-    del.type = 'button';
-    del.className = 'goal-delete';
-    del.setAttribute('aria-label', 'Delete goal');
-    del.textContent = '×';
-    del.addEventListener('click', () => {
-      const list = getGoals(key);
-      list.splice(idx, 1);
-      setGoals(key, list);
-      reload();
-    });
-    li.appendChild(del);
-
-    wireDragReorder(li, null, key, reload);
-    return li;
-  }
-
-  // ---------- Renderers ----------
-  function renderTodayHeader() {
-    const goals = getGoals(todayKey());
-    const total = goals.length;
-    const done  = goals.filter(g => g.done).length;
-    document.getElementById('gmProgressNum').textContent   = done;
-    document.getElementById('gmProgressTotal').textContent = '/ ' + total;
-    const label = document.getElementById('gmProgressLabel');
-    if (total === 0)        label.textContent = 'no goals yet';
-    else if (done === total) label.textContent = 'all done — solid day';
-    else                     label.textContent = 'complete';
-
-    document.getElementById('todayLabel').textContent =
-      'Today — ' + formatDate(getActiveDateString());
-
-    const bar = document.getElementById('gmBar');
-    bar.innerHTML = '';
-    goals.forEach(g => {
-      const seg = document.createElement('div');
-      seg.className = 'gm-bar-seg' + (g.done ? ' gm-bar-seg-done' : '');
-      bar.appendChild(seg);
-    });
-
-    const card = document.getElementById('gmCardToday');
-    card.classList.toggle('gm-all-done', total > 0 && done === total);
-
-    const pushBtn = document.getElementById('gmPushBtn');
-    pushBtn.style.display = (total > 0 && done < total) ? 'block' : 'none';
-  }
-
-  function renderStreak() {
-    const s = loadStreak();
-    document.getElementById('gmStreakNum').textContent = s.count;
-    document.getElementById('gmStreak').classList.toggle('gm-streak-active', s.count > 0);
-  }
-
-  function renderTomorrowCount() {
-    const list = getGoals(tomorrowKey());
-    document.getElementById('gmTomorrowCount').textContent = list.length + ' planned';
-    document.getElementById('tomorrowLabel').textContent =
-      'Plan tomorrow — ' + formatDate(getTomorrowDateString());
-  }
-
-  function renderListInto(goals, listEl, emptyEl, key, readOnly) {
-    listEl.innerHTML = '';
-    emptyEl.style.display = goals.length === 0 ? 'block' : 'none';
-    const reload = () => (key === todayKey() ? loadToday() : loadTomorrow());
-
-    const visible = goals.length > 5 ? goals.slice(0, 5) : goals;
-    visible.forEach((g, i) => listEl.appendChild(buildGoalRow(g, i, key, readOnly, reload)));
-
-    if (goals.length > 5) {
-      let expanded = false;
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'gm-show-toggle';
-      const updateLabel = () => {
-        toggle.textContent = expanded ? 'Show less ▴' : ('Show ' + (goals.length - 5) + ' more ▾');
-      };
-      updateLabel();
-      toggle.addEventListener('click', () => {
-        expanded = !expanded;
-        if (expanded) {
-          goals.slice(5).forEach((g, i) => {
-            const row = buildGoalRow(g, i + 5, key, readOnly, reload);
-            listEl.insertBefore(row, toggle);
-          });
-        } else {
-          Array.from(listEl.querySelectorAll('.gm-row')).slice(5).forEach(r => r.remove());
-        }
-        updateLabel();
-      });
-      listEl.appendChild(toggle);
-    }
-
-    if (key === todayKey()) renderTodayHeader();
-    else                    renderTomorrowCount();
-  }
-
-  function loadToday() {
-    const goals = getGoals(todayKey());
-    renderListInto(goals, document.getElementById('goalList'), document.getElementById('emptyState'), todayKey(), false);
-  }
-  function loadTomorrow() {
-    const goals = getGoals(tomorrowKey());
-    renderListInto(goals, document.getElementById('tomorrowList'), document.getElementById('tomorrowEmpty'), tomorrowKey(), true);
-  }
-
-  // ---------- Push remaining ----------
-  document.getElementById('gmPushBtn').addEventListener('click', () => {
-    const today    = getGoals(todayKey());
-    const remaining = today.filter(g => !g.done);
-    if (remaining.length === 0) return;
-    if (!confirm('Move ' + remaining.length + ' unchecked goal' + (remaining.length === 1 ? '' : 's') + ' to tomorrow?')) return;
-    const tomorrow = getGoals(tomorrowKey());
-    const seen = new Set(tomorrow.map(g => g.text));
-    remaining.forEach(g => {
-      if (!seen.has(g.text)) { tomorrow.push({ text: g.text, done: false }); seen.add(g.text); }
-    });
-    setGoals(tomorrowKey(), tomorrow);
-    setGoals(todayKey(), today.filter(g => g.done));
-    loadToday(); loadTomorrow();
+  const allRanks=['Mayor','Baron','Earl','Duke','King','Emperor'];
+  const curIdx=allRanks.indexOf(r);
+  const stepsHtml=allRanks.map((rn,i)=>{
+    const done=i<curIdx,cur=i===curIdx;
+    const col=done?'var(--gold)':cur?'var(--gold-l)':'var(--dim)';
+    const sz=cur?'.78rem':'.6rem';
+    return`<span style="color:${col};font-size:${sz};letter-spacing:.08em;${cur?'font-weight:700':''}">${rn}</span>`;
+  }).join(`<span style="color:var(--border2);font-size:.55rem;margin:0 .3rem">→</span>`);
+  let h=`<div class="rbanner">
+    <div class="rtitle">${r}</div>
+    <div style="margin:.45rem 0;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.2rem">${stepsHtml}</div>
+    <div class="rtxp">${tx.toLocaleString()} Total XP Earned</div>
+    ${rankBar}
+  </div>`;
+  h+=`<div class="panel"><div class="ptitle">⚜ Character Attributes</div><div class="attr-grid">`;
+  Object.entries(S.attributes).forEach(([k,a])=>{
+    const xn=xpNeeded(a.level),pct=Math.round(a.xp/xn*100);
+    const traits=TRAITS[k].filter(t=>t.l<=a.level);
+    h+=`<div class="acard">
+      <div class="aname">${AI[k]} ${AN[k]}</div>
+      <div class="adesc">${AD[k]}</div>
+      <div class="alevel">${a.level}</div>
+      <div class="xbg"><div class="xfill" style="width:${pct}%"></div></div>
+      <div class="xtxt">${a.xp} / ${xn} XP to next level</div>
+      ${traits.length?`<div class="tbadges">${traits.map(t=>`<span class="tbadge">${t.n}</span>`).join('')}</div>`:''}
+    </div>`;
   });
+  h+=`</div></div>`;
+  const dd=QUESTS.filter(q=>q.type==='daily'&&S.completedDaily.includes(q.id)).length;
+  const dw=QUESTS.filter(q=>q.type==='weekly'&&S.completedWeekly.includes(q.id)).length;
+  const dc=S.completedChapters.length,tc=COURSES.reduce((s,c)=>s+c.chapters.length,0);
+  h+=`<div class="panel"><div class="ptitle">📊 Today's Progress</div>
+    <div class="statgrid">
+      <div><div class="statval">${dd}/5</div><div class="statlbl">Daily Quests</div></div>
+      <div><div class="statval">${dw}/5</div><div class="statlbl">Weekly Quests</div></div>
+      <div><div class="statval">${dc}/${tc}</div><div class="statlbl">Chapters Done</div></div>
+    </div></div>`;
+  return h;
+}
 
-  // ---------- Add + Polish handlers ----------
-  function showStatus(el, message, isError) {
-    el.textContent = message;
-    el.classList.toggle('gm-status-error', !!isError);
-    clearTimeout(el._t);
-    el._t = setTimeout(() => { el.textContent = ''; el.classList.remove('gm-status-error'); }, 3500);
-  }
-
-  async function polishOne(text) {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content:
-            'Rewrite this single goal so it is concrete, action-oriented, and under 60 characters. ' +
-            'Return ONLY a JSON array with exactly one string, no preamble, no code fences.\n\nGoal: ' + text
-        }]
-      })
-    });
-    const data = await res.json();
-    const content = (data && data.content && data.content[0] && data.content[0].text) || '';
-    const arr = JSON.parse(content);
-    if (!Array.isArray(arr) || arr.length < 1 || typeof arr[0] !== 'string') throw new Error('bad response');
-    return arr[0].trim();
-  }
-
-  function makeAddHandlers(input, addBtn, polishBtn, key, statusEl, reload) {
-    function plainAdd(text) {
-      const list = getGoals(key);
-      list.push({ text, done: false });
-      setGoals(key, list);
-      input.value = '';
-      reload();
-    }
-    addBtn.addEventListener('click', () => {
-      const text = input.value.trim();
-      if (!text) return;
-      plainAdd(text);
-    });
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); addBtn.click(); }
-    });
-    polishBtn.addEventListener('click', async () => {
-      const text = input.value.trim();
-      if (!text) return;
-      if (!ANTHROPIC_API_KEY) {
-        plainAdd(text);
-        showStatus(statusEl, 'Polish needs an Anthropic API key — added as-typed.', false);
-        return;
-      }
-      polishBtn.disabled = true;
-      try {
-        const polished = await polishOne(text);
-        plainAdd(polished);
-      } catch (e) {
-        plainAdd(text);
-        showStatus(statusEl, 'Polish failed — added as-typed.', true);
-      } finally {
-        polishBtn.disabled = false;
-      }
-    });
-  }
-
-  makeAddHandlers(
-    document.getElementById('goalInput'),
-    document.getElementById('goalAddBtn'),
-    document.getElementById('goalPolishBtn'),
-    todayKey(),
-    document.getElementById('polishStatus'),
-    loadToday
-  );
-  makeAddHandlers(
-    document.getElementById('tomorrowInput'),
-    document.getElementById('tomorrowAddBtn'),
-    document.getElementById('tomorrowPolishBtn'),
-    tomorrowKey(),
-    document.getElementById('tomorrowStatus'),
-    loadTomorrow
-  );
-
-  // ---------- Boot ----------
-  rollover();
-  processStreak();
-  loadToday();
-  loadTomorrow();
-  renderStreak();
-  updateDayRing();
-  setInterval(updateDayRing, 60 * 1000);
-  startTicker();
-
-  // Re-render when storage changes from another tab (or our bridged parent).
-  window.addEventListener('storage', () => {
-    loadToday(); loadTomorrow(); renderStreak();
+function rQuests(){
+  let h=`<div class="panel"><div class="ptitle">⚔ Quest Board</div>
+    <div class="shead">Daily Quests — Reset at Midnight</div>`;
+  QUESTS.filter(q=>q.type==='daily').forEach(q=>{
+    const done=S.completedDaily.includes(q.id);
+    h+=qHTML(q,done,'daily');
   });
-})();
+  h+=`<div class="shead" style="margin-top:1.25rem">Weekly Quests — Reset Each Sunday</div>`;
+  QUESTS.filter(q=>q.type==='weekly').forEach(q=>{
+    const done=S.completedWeekly.includes(q.id);
+    h+=qHTML(q,done,'weekly');
+  });
+  h+=`</div>`;return h;
+}
+
+function qHTML(q,done,type){
+  return`<div class="qi ${done?'done':''}">
+    <button class="qbtn" onclick="completeQuest('${q.id}','${type}')" ${done?'disabled':''}>
+      ${done?'✓':'○'}
+    </button>
+    <div class="qinfo"><div class="qname">${q.name}</div><div class="qdesc">${q.desc}</div></div>
+    <div class="qmeta"><div class="qxp">+${q.xp} XP</div><div class="qattr">${AI[q.attr]} ${AN[q.attr]}</div></div>
+  </div>`;
+}
+
+function rTomes(){
+  let h=`<div class="panel"><div class="ptitle">📜 Tomes of Knowledge</div>`;
+  COURSES.forEach(course=>{
+    const done=course.chapters.filter(ch=>S.completedChapters.includes(ch.id)).length;
+    const tot=course.chapters.length,pct=Math.round(done/tot*100);
+    const open=S.openCourses.includes(course.id);
+    h+=`<div class="ccard">
+      <div class="chdr" onclick="toggleCourse('${course.id}')">
+        <div class="ctarea">
+          <div class="cname">${AI[course.attr]} ${course.name}</div>
+          <div class="cdesc">${course.desc}</div>
+          <div style="display:flex;align-items:center;gap:.65rem;margin-top:.4rem">
+            <div class="cpbar"><div class="cpfill" style="width:${pct}%"></div></div>
+            <span style="font-size:.52rem;color:var(--dim)">${done}/${tot} chapters</span>
+          </div>
+        </div>
+        <div class="ctog">${open?'▲':'▼'}</div>
+      </div>
+      <div class="cchaps ${open?'open':''}">
+        ${course.chapters.map(ch=>{
+          const cdone=S.completedChapters.includes(ch.id);
+          return`<div class="chapitem ${cdone?'cdone':''}">
+            <button class="chapbtn" onclick="completeChapter('${ch.id}','${course.id}')" ${cdone?'disabled':''}>
+              ${cdone?'✓':'○'}
+            </button>
+            <div class="chapinfo">
+              <div class="chapname">${ch.name}</div>
+              <div class="chapcontent">${ch.content}</div>
+            </div>
+            <div class="chapxp">+${ch.xp} XP</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  h+=`</div>`;return h;
+}
+
+function rDecrees(){
+  let h=`<div class="panel"><div class="ptitle">👑 Issue a Decree</div>
+    <div class="dform">
+      <div class="fg ffulll">
+        <label>Name of the Decree</label>
+        <input class="finput" id="dn" placeholder="e.g. Read for 30 minutes" maxlength="80"/>
+      </div>
+      <div class="fg">
+        <label>Attribute</label>
+        <select class="fsel" id="da">
+          ${Object.entries(AN).map(([k,v])=>`<option value="${k}">${AI[k]} ${v}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fg">
+        <label>XP Reward (5–500)</label>
+        <input class="finput" id="dx" type="number" min="5" max="500" placeholder="30"/>
+      </div>
+      <div class="fg">
+        <label>Frequency</label>
+        <select class="fsel" id="dt">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+        </select>
+      </div>
+      <div class="fg" style="justify-content:flex-end">
+        <button class="btn" onclick="addDecree()">⚜ Issue Decree</button>
+      </div>
+    </div>
+  </div>`;
+  if(!S.decrees.length){
+    h+=`<div class="panel" style="text-align:center;color:var(--dim);font-size:.67rem;letter-spacing:.1em;padding:1.5rem">No decrees issued. Issue thy first command above.</div>`;
+  } else {
+    h+=`<div class="panel"><div class="ptitle">📜 Active Decrees</div>`;
+    S.decrees.forEach(d=>{
+      const done=S.completedDecrees.includes(d.id);
+      h+=`<div class="qi ${done?'done':''}">
+        <button class="qbtn" onclick="completeDecree('${d.id}')" ${done?'disabled':''}>${done?'✓':'○'}</button>
+        <div class="qinfo"><div class="qname">${d.name}</div><div class="qdesc">${d.type==='daily'?'Daily decree':'Weekly decree'}</div></div>
+        <div class="qmeta"><div class="qxp">+${d.xp} XP</div><div class="qattr">${AI[d.attr]} ${AN[d.attr]}</div></div>
+        <button class="btn btnd" style="margin-left:.5rem;padding:.28rem .45rem;font-size:.52rem" onclick="deleteDecree('${d.id}')">✕</button>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+  return h;
+}
+
+function rLog(){
+  let h=`<div class="panel"><div class="ptitle">📖 The Chronicle Scroll</div>`;
+  if(!S.log.length){
+    h+=`<div style="color:var(--dim);font-size:.67rem;text-align:center;letter-spacing:.1em;padding:.875rem 0">No deeds recorded yet. Begin thy journey.</div>`;
+  } else {
+    S.log.forEach(e=>{
+      h+=`<div class="lentry"><span class="ltime">${e.t}</span><span>${e.txt}</span></div>`;
+    });
+  }
+  h+=`</div><div style="text-align:center;margin-top:.875rem">
+    <button class="btn btnd" onclick="clearLog()">Clear Chronicle</button>
+  </div>`;
+  return h;
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const timeout=new Promise((_,rej)=>setTimeout(()=>rej('timeout'),2500));
+    const r=await Promise.race([window.storage.get('ck3life_v3'),timeout]);
+    if(r&&r.value){
+      const parsed=JSON.parse(r.value);
+      S=parsed;
+      ['completedDecrees','openCourses'].forEach(k=>{if(!S[k])S[k]=[]});
+      Object.keys(S.attributes).forEach(k=>{
+        if(!S.attributes[k].unlockedTraits)S.attributes[k].unlockedTraits=[];
+        if(!S.attributes[k].totalXP)S.attributes[k].totalXP=0;
+      });
+      if(S.lastDaily!==today()){
+        S.completedDaily=[];
+        S.completedDecrees=(S.completedDecrees||[]).filter(id=>{
+          const d=(S.decrees||[]).find(x=>x.id===id);return d&&d.type==='weekly';
+        });
+        S.lastDaily=today();
+      }
+      if(S.lastWeekly!==weekStart()){S.completedWeekly=[];S.lastWeekly=weekStart()}
+      notif('⚜ Chronicle restored from memory');
+    }
+  }catch(e){}
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  render();
+}
+init();
 </script>
 </body>
 </html>
