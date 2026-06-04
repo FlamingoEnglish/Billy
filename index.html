@@ -3,99 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#080604">
+<meta name="theme-color" content="#090704">
 <title>Billy's Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080604;--panel:#120e08;--panel2:#1a1510;
-  --gold:#c9a84c;--gold-l:#e8cc7a;--gold-d:#7a5f20;
-  --text:#e0cda0;--dim:#8a7550;--red:#8b1a1a;
-  --border:#3a2a18;--border2:#5a4028;--green:#2d5a1b;
+  --bg:#09070400;--panel:#1c1108;--panel2:#231608;--panel3:#2c1e0e;
+  --gold:#d4a843;--gold-l:#f0cb6a;--gold-d:#8a621a;--gold-b:#5a4012;
+  --text:#ead5a0;--dim:#8a7048;--red:#a01818;--border:#3a250e;--border2:#4a3018;
 }
-body{background:var(--bg);color:var(--text);font-family:'Cinzel',Georgia,serif;min-height:100vh;background-image:radial-gradient(ellipse at top,#1a0e00 0%,#080604 60%)}
-#loading{display:flex;align-items:center;justify-content:center;height:100vh;font-size:1.2rem;color:var(--gold);letter-spacing:.12em}
-#header{background:linear-gradient(180deg,#1c0e00,#0d0900);border-bottom:2px solid var(--gold-d);padding:.9rem 1rem;text-align:center;position:relative}
-#header::before,#header::after{content:'⚜';position:absolute;top:50%;transform:translateY(-50%);color:var(--gold-d);font-size:1.3rem}
-#header::before{left:1.2rem}#header::after{right:1.2rem}
-.htitle{font-family:'Cinzel Decorative',cursive;font-size:1.25rem;color:var(--gold);letter-spacing:.12em;text-shadow:0 0 20px rgba(201,168,76,.4)}
-.hrank{font-size:.65rem;color:var(--dim);letter-spacing:.2em;margin-top:.2rem}
-#nav{display:flex;background:var(--panel);border-bottom:1px solid var(--border);overflow-x:auto}
-.ntab{flex:1;min-width:72px;padding:.65rem .4rem;text-align:center;font-size:.6rem;letter-spacing:.06em;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
-.ntab:hover{color:var(--gold)}.ntab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,.05)}
-#content{max-width:860px;margin:0 auto;padding:.875rem}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:1.1rem;margin-bottom:.875rem;position:relative}
-.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-d),transparent)}
-.ptitle{font-size:.7rem;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem}
-.attr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.65rem}
-.acard{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:.875rem;position:relative;overflow:hidden}
-.acard::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gold-d)}
-.aname{font-size:.65rem;letter-spacing:.12em;color:var(--gold);margin-bottom:.15rem}
-.adesc{font-size:.55rem;color:var(--dim);margin-bottom:.6rem}
-.alevel{font-size:1.7rem;font-weight:700;color:var(--gold-l);line-height:1;margin-bottom:.4rem}
-.xbg{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:.2rem}
-.xfill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:2px;transition:width .5s ease}
-.xtxt{font-size:.52rem;color:var(--dim)}
-.tbadges{margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.2rem}
-.tbadge{font-size:.48rem;background:rgba(201,168,76,.12);border:1px solid var(--gold-d);color:var(--gold);padding:.08rem .3rem;border-radius:2px;letter-spacing:.04em}
-.qi{background:var(--panel2);border:1px solid var(--border);border-radius:3px;padding:.75rem .875rem;margin-bottom:.4rem;display:flex;align-items:center;gap:.75rem;transition:opacity .3s}
-.qi.done{opacity:.4}
-.qbtn{flex-shrink:0;width:26px;height:26px;border:1.5px solid var(--gold-d);background:transparent;color:var(--gold);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:all .2s;border-radius:2px;font-family:'Cinzel',serif}
-.qbtn:hover:not(:disabled){background:rgba(201,168,76,.18)}.qbtn:disabled{border-color:var(--border);color:var(--dim);cursor:default}
-.qinfo{flex:1}.qname{font-size:.7rem;letter-spacing:.04em;color:var(--text);margin-bottom:.15rem}.qdesc{font-size:.57rem;color:var(--dim)}
-.qmeta{text-align:right;flex-shrink:0}.qxp{font-size:.62rem;color:var(--gold);white-space:nowrap}.qattr{font-size:.52rem;color:var(--dim);margin-top:.12rem}
-.shead{font-size:.6rem;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;margin:1rem 0 .45rem;display:flex;align-items:center;gap:.5rem}
-.shead::after{content:'';flex:1;height:1px;background:var(--border)}
-.ccard{background:var(--panel2);border:1px solid var(--border);border-radius:3px;margin-bottom:.65rem;overflow:hidden}
-.chdr{padding:.875rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
-.chdr:hover{background:rgba(201,168,76,.05)}
+body{background:radial-gradient(ellipse at 50% 0%,#220f00 0%,#090704 55%);color:var(--text);font-family:'Cinzel',Georgia,serif;min-height:100vh}
+#loading{display:flex;align-items:center;justify-content:center;height:100vh;font-size:1.2rem;color:var(--gold);letter-spacing:.15em}
+/* HEADER */
+#header{background:linear-gradient(180deg,#251408 0%,#130a04 100%);height:66px;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid var(--gold-b);box-shadow:0 1px 0 #2a1a08,0 2px 0 var(--gold-d),0 3px 0 #1a0e04,0 8px 20px rgba(0,0,0,.7)}
+.herald{color:var(--gold-d);letter-spacing:.35rem;font-size:1rem;opacity:.9}
+.htarea{text-align:center;padding:0 1rem}
+.htitle{font-family:'Cinzel Decorative',cursive;font-size:1.1rem;color:var(--gold);letter-spacing:.1em;text-shadow:0 0 24px rgba(212,168,67,.45),0 2px 4px rgba(0,0,0,.8)}
+.hrank{font-size:.56rem;color:var(--dim);letter-spacing:.25em;margin-top:.2rem;text-transform:uppercase}
+/* NAV */
+#nav{background:#0d0804;display:flex;border-bottom:2px solid var(--gold-b);box-shadow:0 1px 0 #2a1a08,0 3px 8px rgba(0,0,0,.5);overflow-x:auto}
+.ntab{flex:1;min-width:68px;padding:.65rem .4rem;text-align:center;font-size:.57rem;letter-spacing:.08em;color:var(--dim);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;border-right:1px solid #1a1006}
+.ntab:hover{color:var(--gold);background:rgba(212,168,67,.05)}
+.ntab.active{color:var(--gold-l);border-bottom-color:var(--gold);background:linear-gradient(180deg,rgba(212,168,67,.1) 0%,transparent 100%)}
+/* CONTENT */
+#content{max-width:880px;margin:0 auto;padding:.875rem}
+/* PANEL */
+.panel{background:var(--panel);border:1px solid var(--gold-b);box-shadow:0 0 0 3px var(--panel),0 0 0 4px rgba(90,64,18,.5),0 8px 20px rgba(0,0,0,.55);padding:1rem 1.2rem;margin-bottom:1rem;position:relative}
+.co{position:absolute;color:var(--gold-d);font-size:.55rem;line-height:1;z-index:2;background:var(--panel);padding:0 1px}
+.co.tl{top:-4px;left:-4px}.co.tr{top:-4px;right:-4px}.co.bl{bottom:-4px;left:-4px}.co.br{bottom:-4px;right:-4px}
+.panel-inner{border:1px solid rgba(90,64,18,.3);padding:0;position:absolute;inset:4px;pointer-events:none}
+.ptitle{font-size:.63rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem;padding-bottom:.6rem;border-bottom:1px solid rgba(90,64,18,.5)}
+.ptitle::before,.ptitle::after{content:'—';color:var(--gold-b);font-size:.45rem}
+/* RANK BANNER */
+.rbanner{background:linear-gradient(135deg,#1f1208,#2c1c08,#1f1208);border:1px solid var(--gold-b);box-shadow:0 0 0 3px #100804,0 0 0 4px var(--gold-b),0 8px 24px rgba(0,0,0,.7);padding:1.5rem 1.5rem 1.25rem;text-align:center;margin-bottom:1rem;position:relative}
+.rbanner .co{background:#1f1208}
+.rbanner-deco{font-size:.7rem;color:var(--gold-b);letter-spacing:.5em;margin-bottom:.4rem}
+.rtitle{font-family:'Cinzel Decorative',cursive;font-size:1.9rem;color:var(--gold);text-shadow:0 0 30px rgba(212,168,67,.5),0 2px 6px rgba(0,0,0,.9);letter-spacing:.12em}
+.rtxp{font-size:.56rem;color:var(--dim);letter-spacing:.18em;margin-top:.4rem}
+.dprog{margin:.75rem auto 0;max-width:300px}
+.dprogtxt{font-size:.53rem;color:var(--dim);margin-bottom:.35rem;letter-spacing:.08em}
+.xbg{height:5px;background:rgba(0,0,0,.4);overflow:hidden;border:1px solid var(--gold-b)}
+.xfill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));transition:width .5s ease}
+.rank-ladder{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.2rem;margin:.65rem 0}
+/* ATTR CIRCLES */
+.attr-row{display:flex;justify-content:space-around;flex-wrap:wrap;gap:.875rem;padding:.5rem 0}
+.attr-item{display:flex;flex-direction:column;align-items:center;gap:.45rem;min-width:88px;max-width:120px}
+.attr-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 3px 10px rgba(0,0,0,.7),0 0 0 2px rgba(255,255,255,.07),inset 0 1px 3px rgba(255,255,255,.2),inset 0 -2px 4px rgba(0,0,0,.4)}
+.attr-circle::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.28) 0%,transparent 55%);pointer-events:none}
+.circle-num{font-size:1.45rem;font-weight:700;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.8);position:relative;z-index:1}
+.attr-name-lbl{font-size:.6rem;letter-spacing:.1em;color:var(--gold)}
+.attr-desc-lbl{font-size:.5rem;color:var(--dim);text-align:center}
+.attr-xbar{width:68px;height:4px;background:rgba(0,0,0,.4);overflow:hidden;border:1px solid var(--gold-b)}
+.attr-xfill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));transition:width .5s}
+.attr-xp-lbl{font-size:.48rem;color:var(--dim)}
+.tbadges{display:flex;flex-wrap:wrap;gap:.2rem;justify-content:center}
+.tbadge{font-size:.44rem;background:rgba(212,168,67,.1);border:1px solid var(--gold-b);color:var(--gold);padding:.06rem .26rem;letter-spacing:.03em}
+/* STATS */
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;text-align:center}
+.statval{font-size:1.4rem;color:var(--gold)}.statlbl{font-size:.54rem;color:var(--dim);letter-spacing:.1em;margin-top:.2rem}
+/* SECTION HEADER */
+.shead{font-size:.56rem;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;margin:1rem 0 .5rem;display:flex;align-items:center;gap:.5rem}
+.shead::before{content:'◆';color:var(--gold-b);font-size:.38rem;flex-shrink:0}
+.shead::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-b),transparent)}
+/* QUEST ITEMS */
+.qi{background:var(--panel2);border-left:3px solid var(--gold-b);border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:.7rem .875rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.75rem;transition:all .2s}
+.qi:not(.done):hover{background:var(--panel3);border-left-color:var(--gold);box-shadow:inset 2px 0 8px rgba(212,168,67,.05)}
+.qi.done{opacity:.35;border-left-color:var(--border)}
+.qbtn{flex-shrink:0;width:24px;height:24px;border:1px solid var(--gold-b);background:rgba(0,0,0,.3);color:var(--gold);cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Cinzel',serif}
+.qbtn:hover:not(:disabled){background:rgba(212,168,67,.15);border-color:var(--gold-d)}
+.qbtn:disabled{border-color:var(--border);color:var(--dim);cursor:default}
+.qinfo{flex:1}
+.qname{font-size:.7rem;letter-spacing:.04em;color:var(--text);margin-bottom:.14rem}
+.qdesc{font-size:.57rem;color:var(--dim);font-family:'IM Fell English',Georgia,serif;font-style:italic}
+.qmeta{text-align:right;flex-shrink:0}
+.qxp{font-size:.62rem;color:var(--gold);white-space:nowrap}
+.qattr{font-size:.5rem;color:var(--dim);margin-top:.12rem}
+/* COURSES */
+.ccard{background:var(--panel2);border:1px solid var(--border);margin-bottom:.6rem;overflow:hidden}
+.chdr{padding:.875rem 1rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .2s;border-left:3px solid var(--gold-b)}
+.chdr:hover{background:var(--panel3);border-left-color:var(--gold)}
 .ctarea{flex:1}
 .cname{font-size:.75rem;letter-spacing:.07em;color:var(--gold-l);margin-bottom:.2rem}
-.cdesc{font-size:.57rem;color:var(--dim);margin-bottom:.4rem}
-.cpbar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;width:180px;max-width:100%}
+.cdesc{font-size:.57rem;color:var(--dim);margin-bottom:.4rem;font-family:'IM Fell English',Georgia,serif;font-style:italic}
+.cpbar{height:3px;background:rgba(0,0,0,.4);overflow:hidden;border:1px solid var(--gold-b);width:180px;max-width:100%}
 .cpfill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold))}
-.ctog{color:var(--gold-d);font-size:1rem;margin-left:.875rem}
-.cchaps{border-top:1px solid var(--border);display:none}.cchaps.open{display:block}
+.ctog{color:var(--gold-b);font-size:.9rem;margin-left:.875rem}
+.cchaps{border-top:1px solid var(--border);display:none}
+.cchaps.open{display:block}
 .chapitem{padding:.75rem .875rem;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:flex-start}
-.chapitem:last-child{border-bottom:none}.chapitem.cdone .chapname{color:var(--dim)}
-.chapbtn{flex-shrink:0;width:22px;height:22px;border:1.5px solid var(--gold-d);background:transparent;color:var(--gold);cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;border-radius:2px;transition:all .2s;font-family:'Cinzel',serif}
-.chapbtn:hover:not(:disabled){background:rgba(201,168,76,.18)}.chapbtn:disabled{border-color:var(--border);color:var(--dim);cursor:default}
-.chapinfo{flex:1}.chapname{font-size:.67rem;letter-spacing:.04em;color:var(--text);margin-bottom:.25rem}
-.chapcontent{font-size:.58rem;color:var(--dim);line-height:1.65;font-family:Georgia,serif}
+.chapitem:last-child{border-bottom:none}
+.chapitem.cdone .chapname{color:var(--dim)}
+.chapbtn{flex-shrink:0;width:20px;height:20px;border:1px solid var(--gold-b);background:rgba(0,0,0,.3);color:var(--gold);cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Cinzel',serif}
+.chapbtn:hover:not(:disabled){background:rgba(212,168,67,.15)}
+.chapbtn:disabled{border-color:var(--border);color:var(--dim);cursor:default}
+.chapinfo{flex:1}
+.chapname{font-size:.67rem;letter-spacing:.04em;color:var(--text);margin-bottom:.25rem}
+.chapcontent{font-size:.6rem;color:var(--dim);line-height:1.7;font-family:'IM Fell English',Georgia,serif}
 .chapxp{font-size:.58rem;color:var(--gold);white-space:nowrap;flex-shrink:0}
+/* FORM */
 .dform{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
 .fg{display:flex;flex-direction:column;gap:.35rem}
-.fg label{font-size:.57rem;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
-.finput,.fsel{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Cinzel',serif;font-size:.67rem;padding:.45rem .65rem;border-radius:2px;outline:none;transition:border-color .2s}
-.finput:focus,.fsel:focus{border-color:var(--gold-d)}.fsel option{background:var(--panel)}
+.fg label{font-size:.54rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase}
+.finput,.fsel{background:#0d0804;border:1px solid var(--border);border-top-color:var(--gold-b);color:var(--text);font-family:'Cinzel',serif;font-size:.67rem;padding:.45rem .65rem;outline:none;transition:border-color .2s}
+.finput:focus,.fsel:focus{border-color:var(--gold-d);border-top-color:var(--gold)}
+.fsel option{background:var(--panel)}
 .ffulll{grid-column:1/-1}
-.btn{background:transparent;border:1px solid var(--gold-d);color:var(--gold);font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;padding:.55rem 1.1rem;cursor:pointer;transition:all .2s;border-radius:2px;text-transform:uppercase}
-.btn:hover{background:rgba(201,168,76,.14)}
-.btnd{border-color:var(--red);color:#c0392b}.btnd:hover{background:rgba(139,26,26,.18)}
-.lentry{padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.62rem;color:var(--dim);display:flex;gap:.65rem;font-family:Georgia,serif}
-.lentry:last-child{border-bottom:none}.ltime{color:var(--gold-d);flex-shrink:0;font-family:'Cinzel',serif}
-.rbanner{text-align:center;padding:1.25rem;border:1px solid var(--gold-d);background:linear-gradient(135deg,var(--panel2),var(--panel));border-radius:4px;margin-bottom:.875rem;position:relative}
-.rtitle{font-family:'Cinzel Decorative',cursive;font-size:1.5rem;color:var(--gold);text-shadow:0 0 30px rgba(201,168,76,.45);letter-spacing:.1em}
-.rtxp{font-size:.6rem;color:var(--dim);letter-spacing:.15em;margin-top:.4rem}
-.dprog{margin-top:.65rem;max-width:280px;margin-left:auto;margin-right:auto}
-.dprogtxt{font-size:.57rem;color:var(--dim);margin-bottom:.35rem;letter-spacing:.08em}
-#notif{position:fixed;top:.875rem;right:.875rem;background:var(--panel);border:1px solid var(--gold-d);color:var(--gold);padding:.65rem .875rem;font-size:.67rem;letter-spacing:.04em;border-radius:3px;z-index:1000;transform:translateX(130%);transition:transform .3s;max-width:260px;font-family:'Cinzel',serif}
+.btn{background:linear-gradient(180deg,var(--panel3) 0%,var(--panel2) 100%);border:1px solid var(--gold-b);color:var(--gold);font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;padding:.55rem 1.1rem;cursor:pointer;transition:all .2s;text-transform:uppercase;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.btn:hover{border-color:var(--gold-d);color:var(--gold-l);background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%)}
+.btn:active{box-shadow:none;transform:translateY(1px)}
+.btnd{border-color:var(--red);color:#c04040}
+.btnd:hover{border-color:#c04040;color:#d05050;background:linear-gradient(180deg,rgba(160,24,24,.15),rgba(100,10,10,.1))}
+/* LOG */
+.lentry{padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.6rem;color:var(--dim);display:flex;gap:.65rem;font-family:'IM Fell English',Georgia,serif}
+.lentry:last-child{border-bottom:none}
+.ltime{color:var(--gold-b);flex-shrink:0;font-family:'Cinzel',serif;font-size:.53rem}
+/* NOTIF */
+#notif{position:fixed;top:.875rem;right:.875rem;background:var(--panel);border:1px solid var(--gold-b);box-shadow:0 0 0 3px var(--panel),0 0 0 4px var(--gold-b),0 8px 24px rgba(0,0,0,.7);color:var(--gold);padding:.65rem .875rem;font-size:.65rem;letter-spacing:.04em;z-index:1000;transform:translateX(130%);transition:transform .3s;max-width:260px;font-family:'Cinzel',serif}
 #notif.show{transform:translateX(0)}
-.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;text-align:center}
-.statval{font-size:1.5rem;color:var(--gold)}.statlbl{font-size:.55rem;color:var(--dim);letter-spacing:.1em;margin-top:.2rem}
-@media(max-width:560px){.attr-grid{grid-template-columns:repeat(2,1fr)}.dform{grid-template-columns:1fr}.htitle{font-size:.95rem}.statgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.attr-row{gap:.5rem}.attr-item{min-width:72px}.attr-circle{width:50px;height:50px}.circle-num{font-size:1.2rem}.dform{grid-template-columns:1fr}.htitle{font-size:.88rem}}
 </style>
 </head>
 <body>
 
 <div id="notif"></div>
-<div id="saveind" style="position:fixed;bottom:.75rem;right:.875rem;font-family:'Cinzel',serif;font-size:.55rem;color:var(--gold-d);letter-spacing:.1em;opacity:0;transition:opacity .4s;pointer-events:none">⚜ Chronicle Saved</div>
+<div id="saveind" style="position:fixed;bottom:.75rem;right:.875rem;font-family:'Cinzel',serif;font-size:.5rem;color:var(--gold-b);letter-spacing:.1em;opacity:0;transition:opacity .4s;pointer-events:none">⚜ Chronicle Saved</div>
 <div id="loading">⚜ Loading Thy Chronicles ⚜</div>
 <div id="app" style="display:none">
   <div id="header">
-    <div class="htitle">The Chronicle of the Aspirant</div>
-    <div class="hrank" id="hrank">— — —</div>
+    <div class="herald">✦ ⚜ ✦</div>
+    <div class="htarea">
+      <div class="htitle">The Chronicle of the Aspirant</div>
+      <div class="hrank" id="hrank">— — —</div>
+    </div>
+    <div class="herald">✦ ⚜ ✦</div>
   </div>
   <div id="nav">
     <div class="ntab active" onclick="sw('chronicle')" id="tab-chronicle">⚜ Chronicle</div>
@@ -120,9 +161,17 @@ if (!window.storage) {
   };
 }
 
+// ── DATA ──────────────────────────────────────────────────────────────────
 const AN={diplomacy:'Diplomacy',martial:'Martial',stewardship:'Stewardship',learning:'Learning',intrigue:'Intrigue'};
-const AD={diplomacy:'Social Skills',martial:'Fitness & Strength',stewardship:'Attractiveness & Grooming',learning:'Languages & Knowledge',intrigue:'Mindset & Confidence'};
+const AD={diplomacy:'Social Skills',martial:'Fitness & Strength',stewardship:'Attractiveness',learning:'Languages',intrigue:'Mindset'};
 const AI={diplomacy:'🤝',martial:'⚔️',stewardship:'✨',learning:'📚',intrigue:'🧠'};
+const ATTR_COL={
+  diplomacy:'linear-gradient(145deg,#5b82d4 0%,#3a5fa8 55%,#2a4488 100%)',
+  martial:'linear-gradient(145deg,#d45b5b 0%,#a83a3a 55%,#882a2a 100%)',
+  stewardship:'linear-gradient(145deg,#5bd45b 0%,#3aa83a 55%,#2a882a 100%)',
+  intrigue:'linear-gradient(145deg,#8b5bd4 0%,#6a3aa8 55%,#4e2a88 100%)',
+  learning:'linear-gradient(145deg,#d4a83a 0%,#b87a20 55%,#8a5510 100%)',
+};
 const TRAITS={
   diplomacy:[{l:3,n:"Courteous"},{l:5,n:"Silver-Tongued"},{l:8,n:"Orator"},{l:12,n:"Grand Diplomat"},{l:16,n:"Envoy Royal"},{l:20,n:"The Charmer"}],
   martial:[{l:3,n:"Trained"},{l:5,n:"Iron-Willed"},{l:8,n:"Warrior"},{l:12,n:"Champion"},{l:16,n:"War Hero"},{l:20,n:"The Ironclad"}],
@@ -130,6 +179,11 @@ const TRAITS={
   learning:[{l:3,n:"Literate"},{l:5,n:"Scholar"},{l:8,n:"Polyglot"},{l:12,n:"Sage"},{l:16,n:"Grand Academician"},{l:20,n:"The Wise"}],
   intrigue:[{l:3,n:"Cunning"},{l:5,n:"Scheming"},{l:8,n:"Manipulator"},{l:12,n:"Shadowmaster"},{l:16,n:"Spymaster"},{l:20,n:"The Architect"}]
 };
+const RANKS=[
+  {name:'Mayor',min:0,next:800},{name:'Baron',min:800,next:3000},
+  {name:'Earl',min:3000,next:10000},{name:'Duke',min:10000,next:28000},
+  {name:'King',min:28000,next:80000},{name:'Emperor',min:80000,next:null},
+];
 const QUESTS=[
   {id:'q1',name:"Train in the Yard",desc:"Complete thy workout for the day",attr:'martial',xp:40,type:'daily'},
   {id:'q2',name:"Study the Iberian Tongue",desc:"Practice Portuguese for 20 minutes",attr:'learning',xp:35,type:'daily'},
@@ -196,25 +250,45 @@ const DS=()=>({
   decrees:[],completedDecrees:[],log:[],
   lastDaily:today(),lastWeekly:weekStart(),openCourses:[]
 });
-
 let S=DS(),curTab='chronicle';
 
-// ── XP ─────────────────────────────────────────────────────────────────────
+// ── STORAGE ────────────────────────────────────────────────────────────────
+async function save(){
+  try{
+    await window.storage.set('ck3life_v4',JSON.stringify(S));
+    const el=document.getElementById('saveind');
+    if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1400)}
+  }catch(e){}
+}
+async function tryLoad(){
+  try{
+    const t=new Promise((_,r)=>setTimeout(()=>r('timeout'),3000));
+    const res=await Promise.race([window.storage.get('ck3life_v4'),t]);
+    if(res&&res.value){
+      const p=JSON.parse(res.value);
+      S=p;
+      ['completedDecrees','openCourses'].forEach(k=>{if(!S[k])S[k]=[]});
+      Object.keys(S.attributes).forEach(k=>{
+        if(!S.attributes[k].unlockedTraits)S.attributes[k].unlockedTraits=[];
+        if(!S.attributes[k].totalXP)S.attributes[k].totalXP=0;
+      });
+      if(S.lastDaily!==today()){
+        S.completedDaily=[];
+        S.completedDecrees=(S.completedDecrees||[]).filter(id=>{
+          const d=(S.decrees||[]).find(x=>x.id===id);return d&&d.type==='weekly';
+        });
+        S.lastDaily=today();
+      }
+      if(S.lastWeekly!==weekStart()){S.completedWeekly=[];S.lastWeekly=weekStart()}
+      render();notif('⚜ Chronicle restored');
+    }
+  }catch(e){}
+}
+
+// ── XP & RANK ──────────────────────────────────────────────────────────────
 function xpNeeded(lv){return lv*300}
 function totalXP(){return Object.values(S.attributes).reduce((s,a)=>s+(a.totalXP||0),0)}
-const RANKS=[
-  {name:'Mayor',   min:0,     next:800},
-  {name:'Baron',   min:800,   next:3000},
-  {name:'Earl',    min:3000,  next:10000},
-  {name:'Duke',    min:10000, next:28000},
-  {name:'King',    min:28000, next:80000},
-  {name:'Emperor', min:80000, next:null},
-];
-function getRankObj(){
-  const tx=totalXP();
-  for(let i=RANKS.length-1;i>=0;i--){if(tx>=RANKS[i].min)return{...RANKS[i],tx}}
-  return{...RANKS[0],tx};
-}
+function getRankObj(){const tx=totalXP();for(let i=RANKS.length-1;i>=0;i--)if(tx>=RANKS[i].min)return{...RANKS[i],tx};return{...RANKS[0],tx}}
 function rank(){return getRankObj().name}
 
 function addXP(attr,amt,src){
@@ -230,46 +304,32 @@ function addXP(attr,amt,src){
 }
 
 function log(txt){
-  const d=new Date();
-  const t=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const d=new Date(),t=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   S.log.unshift({txt,t});if(S.log.length>120)S.log=S.log.slice(0,120);
 }
 
-async function save(){
-  try{
-    await window.storage.set('ck3life_v3',JSON.stringify(S));
-    const el=document.getElementById('saveind');
-    if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1200)}
-  }catch(e){console.error('Save failed:',e);notif('⚠ Save failed — storage unavailable')}
-}
-
-// ── NOTIF ──────────────────────────────────────────────────────────────────
-let ntTimer;
+let nt2;
 function notif(msg){
   const el=document.getElementById('notif');
   el.textContent=msg;el.classList.add('show');
-  clearTimeout(ntTimer);ntTimer=setTimeout(()=>el.classList.remove('show'),3400);
+  clearTimeout(nt2);nt2=setTimeout(()=>el.classList.remove('show'),3400);
 }
 
-// ── TABS ───────────────────────────────────────────────────────────────────
+// ── TABS & ACTIONS ─────────────────────────────────────────────────────────
 function sw(tab){
   curTab=tab;
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   render();
 }
-
-// ── ACTIONS ────────────────────────────────────────────────────────────────
 function completeQuest(id,type){
   const q=QUESTS.find(x=>x.id===id);if(!q)return;
   if(type==='daily')S.completedDaily.push(id);else S.completedWeekly.push(id);
-  addXP(q.attr,q.xp,`📜 "${q.name}":`);
-  save();notif(`⚔ Quest Complete: ${q.name}!`);render();
+  addXP(q.attr,q.xp,`📜 "${q.name}":`);save();notif(`⚔ Quest Complete: ${q.name}!`);render();
 }
 function completeDecree(id){
   const d=S.decrees.find(x=>x.id===id);if(!d)return;
-  S.completedDecrees.push(id);
-  addXP(d.attr,d.xp,`👑 Decree "${d.name}":`);
+  S.completedDecrees.push(id);addXP(d.attr,d.xp,`👑 Decree "${d.name}":`);
   save();notif(`👑 Decree Fulfilled: ${d.name}!`);render();
 }
 function deleteDecree(id){
@@ -280,14 +340,12 @@ function deleteDecree(id){
 function completeChapter(cid,coid){
   const course=COURSES.find(c=>c.id===coid);
   const ch=course?.chapters.find(c=>c.id===cid);if(!ch)return;
-  S.completedChapters.push(cid);
-  addXP(course.attr,ch.xp,`📖 "${ch.name}":`);
+  S.completedChapters.push(cid);addXP(course.attr,ch.xp,`📖 "${ch.name}":`);
   save();notif(`📖 Chapter Complete: ${ch.name}!`);render();
 }
 function toggleCourse(id){
   if(S.openCourses.includes(id))S.openCourses=S.openCourses.filter(x=>x!==id);
-  else S.openCourses.push(id);
-  render();
+  else S.openCourses.push(id);render();
 }
 function addDecree(){
   const name=document.getElementById('dn').value.trim();
@@ -297,11 +355,17 @@ function addDecree(){
   if(!name||!attr||isNaN(xp)||xp<5){notif('⚠ Fill all fields. XP must be at least 5.');return}
   S.decrees.push({id:'d'+Date.now(),name,attr,xp:Math.min(xp,500),type});
   save();notif('👑 Decree Issued!');
-  document.getElementById('dn').value='';
-  document.getElementById('dx').value='';
-  render();
+  document.getElementById('dn').value='';document.getElementById('dx').value='';render();
 }
-function clearLog(){if(!confirm('Clear the Chronicle Scroll? This cannot be undone.'))return;S.log=[];save();render()}
+function clearLog(){if(!confirm('Clear the Chronicle Scroll?'))return;S.log=[];save();render()}
+
+// ── PANEL HELPER ───────────────────────────────────────────────────────────
+function P(title,content){
+  return`<div class="panel">
+    <div class="co tl">◆</div><div class="co tr">◆</div>
+    <div class="co bl">◆</div><div class="co br">◆</div>
+    <div class="ptitle">${title}</div>${content}</div>`;
+}
 
 // ── RENDER ─────────────────────────────────────────────────────────────────
 function render(){
@@ -318,84 +382,82 @@ function render(){
 
 function rChronicle(){
   const ro=getRankObj(),tx=ro.tx,r=ro.name;
+  const curIdx=RANKS.findIndex(x=>x.name===r);
+  const ladder=RANKS.map((rn,i)=>{
+    const done=i<curIdx,cur=i===curIdx;
+    return`<span style="color:${done?'var(--gold)':cur?'var(--gold-l)':'var(--dim)'};font-size:${cur?'.72rem':'.58rem'};letter-spacing:.07em;${cur?'font-weight:700':''}">${rn.name}</span>
+    ${i<RANKS.length-1?`<span style="color:var(--gold-b);font-size:.45rem;margin:0 .2rem">→</span>`:''}`
+  }).join('');
+
   let rankBar='';
   if(ro.next){
-    const from=ro.min,to=ro.next,pct=Math.min(100,Math.round((tx-from)/(to-from)*100));
-    const nextName=RANKS[RANKS.findIndex(x=>x.name===r)+1]?.name||'';
+    const pct=Math.min(100,Math.round((tx-ro.min)/(ro.next-ro.min)*100));
+    const nxt=RANKS[curIdx+1]?.name||'';
     rankBar=`<div class="dprog">
-      <div class="dprogtxt">${(tx-from).toLocaleString()} / ${(to-from).toLocaleString()} XP towards ${nextName}</div>
+      <div class="dprogtxt">${(tx-ro.min).toLocaleString()} / ${(ro.next-ro.min).toLocaleString()} XP toward ${nxt}</div>
       <div class="xbg"><div class="xfill" style="width:${pct}%"></div></div>
     </div>`;
   } else {
-    rankBar=`<div style="color:var(--gold);font-size:.65rem;margin-top:.5rem;letter-spacing:.1em">⚜ The Realm bows before thee ⚜</div>`;
+    rankBar=`<div style="color:var(--gold);font-size:.6rem;margin-top:.5rem;letter-spacing:.12em">✦ The realm bows before thee ✦</div>`;
   }
-  const allRanks=['Mayor','Baron','Earl','Duke','King','Emperor'];
-  const curIdx=allRanks.indexOf(r);
-  const stepsHtml=allRanks.map((rn,i)=>{
-    const done=i<curIdx,cur=i===curIdx;
-    const col=done?'var(--gold)':cur?'var(--gold-l)':'var(--dim)';
-    const sz=cur?'.78rem':'.6rem';
-    return`<span style="color:${col};font-size:${sz};letter-spacing:.08em;${cur?'font-weight:700':''}">${rn}</span>`;
-  }).join(`<span style="color:var(--border2);font-size:.55rem;margin:0 .3rem">→</span>`);
+
   let h=`<div class="rbanner">
+    <div class="co tl" style="background:#1f1208">◆</div><div class="co tr" style="background:#1f1208">◆</div>
+    <div class="co bl" style="background:#1f1208">◆</div><div class="co br" style="background:#1f1208">◆</div>
+    <div class="rbanner-deco">✦ ⚜ ✦</div>
     <div class="rtitle">${r}</div>
-    <div style="margin:.45rem 0;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.2rem">${stepsHtml}</div>
+    <div class="rank-ladder">${ladder}</div>
     <div class="rtxp">${tx.toLocaleString()} Total XP Earned</div>
     ${rankBar}
   </div>`;
-  h+=`<div class="panel"><div class="ptitle">⚜ Character Attributes</div><div class="attr-grid">`;
+
+  let attrHtml='<div class="attr-row">';
   Object.entries(S.attributes).forEach(([k,a])=>{
     const xn=xpNeeded(a.level),pct=Math.round(a.xp/xn*100);
     const traits=TRAITS[k].filter(t=>t.l<=a.level);
-    h+=`<div class="acard">
-      <div class="aname">${AI[k]} ${AN[k]}</div>
-      <div class="adesc">${AD[k]}</div>
-      <div class="alevel">${a.level}</div>
-      <div class="xbg"><div class="xfill" style="width:${pct}%"></div></div>
-      <div class="xtxt">${a.xp} / ${xn} XP to next level</div>
+    attrHtml+=`<div class="attr-item">
+      <div class="attr-circle" style="background:${ATTR_COL[k]}">
+        <span class="circle-num">${a.level}</span>
+      </div>
+      <div class="attr-name-lbl">${AN[k]}</div>
+      <div class="attr-desc-lbl">${AD[k]}</div>
+      <div class="attr-xbar"><div class="attr-xfill" style="width:${pct}%"></div></div>
+      <div class="attr-xp-lbl">${a.xp} / ${xn} XP</div>
       ${traits.length?`<div class="tbadges">${traits.map(t=>`<span class="tbadge">${t.n}</span>`).join('')}</div>`:''}
     </div>`;
   });
-  h+=`</div></div>`;
+  attrHtml+='</div>';
+  h+=P('Character Attributes',attrHtml);
+
   const dd=QUESTS.filter(q=>q.type==='daily'&&S.completedDaily.includes(q.id)).length;
   const dw=QUESTS.filter(q=>q.type==='weekly'&&S.completedWeekly.includes(q.id)).length;
   const dc=S.completedChapters.length,tc=COURSES.reduce((s,c)=>s+c.chapters.length,0);
-  h+=`<div class="panel"><div class="ptitle">📊 Today's Progress</div>
-    <div class="statgrid">
-      <div><div class="statval">${dd}/5</div><div class="statlbl">Daily Quests</div></div>
-      <div><div class="statval">${dw}/5</div><div class="statlbl">Weekly Quests</div></div>
-      <div><div class="statval">${dc}/${tc}</div><div class="statlbl">Chapters Done</div></div>
-    </div></div>`;
+  h+=P("Today's Campaign",`<div class="statgrid">
+    <div><div class="statval">${dd}/5</div><div class="statlbl">Daily Quests</div></div>
+    <div><div class="statval">${dw}/5</div><div class="statlbl">Weekly Quests</div></div>
+    <div><div class="statval">${dc}/${tc}</div><div class="statlbl">Chapters Done</div></div>
+  </div>`);
   return h;
 }
 
 function rQuests(){
-  let h=`<div class="panel"><div class="ptitle">⚔ Quest Board</div>
-    <div class="shead">Daily Quests — Reset at Midnight</div>`;
-  QUESTS.filter(q=>q.type==='daily').forEach(q=>{
-    const done=S.completedDaily.includes(q.id);
-    h+=qHTML(q,done,'daily');
-  });
-  h+=`<div class="shead" style="margin-top:1.25rem">Weekly Quests — Reset Each Sunday</div>`;
-  QUESTS.filter(q=>q.type==='weekly').forEach(q=>{
-    const done=S.completedWeekly.includes(q.id);
-    h+=qHTML(q,done,'weekly');
-  });
-  h+=`</div>`;return h;
+  let d='',w='';
+  QUESTS.filter(q=>q.type==='daily').forEach(q=>{const done=S.completedDaily.includes(q.id);d+=qHTML(q,done,'daily')});
+  QUESTS.filter(q=>q.type==='weekly').forEach(q=>{const done=S.completedWeekly.includes(q.id);w+=qHTML(q,done,'weekly')});
+  return P('Quest Board',`
+    <div class="shead">Daily Quests — Reseteth at Midnight</div>${d}
+    <div class="shead" style="margin-top:1.1rem">Weekly Quests — Reseteth each Sunday</div>${w}`);
 }
-
 function qHTML(q,done,type){
   return`<div class="qi ${done?'done':''}">
-    <button class="qbtn" onclick="completeQuest('${q.id}','${type}')" ${done?'disabled':''}>
-      ${done?'✓':'○'}
-    </button>
+    <button class="qbtn" onclick="completeQuest('${q.id}','${type}')" ${done?'disabled':''}>${done?'✓':'○'}</button>
     <div class="qinfo"><div class="qname">${q.name}</div><div class="qdesc">${q.desc}</div></div>
     <div class="qmeta"><div class="qxp">+${q.xp} XP</div><div class="qattr">${AI[q.attr]} ${AN[q.attr]}</div></div>
   </div>`;
 }
 
 function rTomes(){
-  let h=`<div class="panel"><div class="ptitle">📜 Tomes of Knowledge</div>`;
+  let h='';
   COURSES.forEach(course=>{
     const done=course.chapters.filter(ch=>S.completedChapters.includes(ch.id)).length;
     const tot=course.chapters.length,pct=Math.round(done/tot*100);
@@ -407,7 +469,7 @@ function rTomes(){
           <div class="cdesc">${course.desc}</div>
           <div style="display:flex;align-items:center;gap:.65rem;margin-top:.4rem">
             <div class="cpbar"><div class="cpfill" style="width:${pct}%"></div></div>
-            <span style="font-size:.52rem;color:var(--dim)">${done}/${tot} chapters</span>
+            <span style="font-size:.5rem;color:var(--dim)">${done}/${tot} chapters</span>
           </div>
         </div>
         <div class="ctog">${open?'▲':'▼'}</div>
@@ -416,9 +478,7 @@ function rTomes(){
         ${course.chapters.map(ch=>{
           const cdone=S.completedChapters.includes(ch.id);
           return`<div class="chapitem ${cdone?'cdone':''}">
-            <button class="chapbtn" onclick="completeChapter('${ch.id}','${course.id}')" ${cdone?'disabled':''}>
-              ${cdone?'✓':'○'}
-            </button>
+            <button class="chapbtn" onclick="completeChapter('${ch.id}','${course.id}')" ${cdone?'disabled':''}>${cdone?'✓':'○'}</button>
             <div class="chapinfo">
               <div class="chapname">${ch.name}</div>
               <div class="chapcontent">${ch.content}</div>
@@ -429,98 +489,59 @@ function rTomes(){
       </div>
     </div>`;
   });
-  h+=`</div>`;return h;
+  return P('Tomes of Knowledge',h);
 }
 
 function rDecrees(){
-  let h=`<div class="panel"><div class="ptitle">👑 Issue a Decree</div>
-    <div class="dform">
-      <div class="fg ffulll">
-        <label>Name of the Decree</label>
-        <input class="finput" id="dn" placeholder="e.g. Read for 30 minutes" maxlength="80"/>
-      </div>
-      <div class="fg">
-        <label>Attribute</label>
-        <select class="fsel" id="da">
-          ${Object.entries(AN).map(([k,v])=>`<option value="${k}">${AI[k]} ${v}</option>`).join('')}
-        </select>
-      </div>
-      <div class="fg">
-        <label>XP Reward (5–500)</label>
-        <input class="finput" id="dx" type="number" min="5" max="500" placeholder="30"/>
-      </div>
-      <div class="fg">
-        <label>Frequency</label>
-        <select class="fsel" id="dt">
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-        </select>
-      </div>
-      <div class="fg" style="justify-content:flex-end">
-        <button class="btn" onclick="addDecree()">⚜ Issue Decree</button>
-      </div>
+  const form=`<div class="dform">
+    <div class="fg ffulll"><label>Name of the Decree</label>
+      <input class="finput" id="dn" placeholder="e.g. Read for 30 minutes" maxlength="80"/>
+    </div>
+    <div class="fg"><label>Attribute</label>
+      <select class="fsel" id="da">${Object.entries(AN).map(([k,v])=>`<option value="${k}">${AI[k]} ${v}</option>`).join('')}</select>
+    </div>
+    <div class="fg"><label>XP Reward (5–500)</label>
+      <input class="finput" id="dx" type="number" min="5" max="500" placeholder="30"/>
+    </div>
+    <div class="fg"><label>Frequency</label>
+      <select class="fsel" id="dt"><option value="daily">Daily</option><option value="weekly">Weekly</option></select>
+    </div>
+    <div class="fg" style="justify-content:flex-end">
+      <button class="btn" onclick="addDecree()">⚜ Issue Decree</button>
     </div>
   </div>`;
+  let h=P('Issue a Decree',form);
   if(!S.decrees.length){
-    h+=`<div class="panel" style="text-align:center;color:var(--dim);font-size:.67rem;letter-spacing:.1em;padding:1.5rem">No decrees issued. Issue thy first command above.</div>`;
+    h+=P('Active Decrees','<div style="color:var(--dim);font-size:.67rem;text-align:center;padding:.875rem 0;letter-spacing:.1em">No decrees issued. Issue thy first command above.</div>');
   } else {
-    h+=`<div class="panel"><div class="ptitle">📜 Active Decrees</div>`;
+    let dl='';
     S.decrees.forEach(d=>{
       const done=S.completedDecrees.includes(d.id);
-      h+=`<div class="qi ${done?'done':''}">
+      dl+=`<div class="qi ${done?'done':''}">
         <button class="qbtn" onclick="completeDecree('${d.id}')" ${done?'disabled':''}>${done?'✓':'○'}</button>
         <div class="qinfo"><div class="qname">${d.name}</div><div class="qdesc">${d.type==='daily'?'Daily decree':'Weekly decree'}</div></div>
         <div class="qmeta"><div class="qxp">+${d.xp} XP</div><div class="qattr">${AI[d.attr]} ${AN[d.attr]}</div></div>
-        <button class="btn btnd" style="margin-left:.5rem;padding:.28rem .45rem;font-size:.52rem" onclick="deleteDecree('${d.id}')">✕</button>
+        <button class="btn btnd" style="margin-left:.5rem;padding:.28rem .45rem;font-size:.5rem" onclick="deleteDecree('${d.id}')">✕</button>
       </div>`;
     });
-    h+=`</div>`;
+    h+=P('Active Decrees',dl);
   }
   return h;
 }
 
 function rLog(){
-  let h=`<div class="panel"><div class="ptitle">📖 The Chronicle Scroll</div>`;
-  if(!S.log.length){
-    h+=`<div style="color:var(--dim);font-size:.67rem;text-align:center;letter-spacing:.1em;padding:.875rem 0">No deeds recorded yet. Begin thy journey.</div>`;
-  } else {
-    S.log.forEach(e=>{
-      h+=`<div class="lentry"><span class="ltime">${e.t}</span><span>${e.txt}</span></div>`;
-    });
-  }
-  h+=`</div><div style="text-align:center;margin-top:.875rem">
-    <button class="btn btnd" onclick="clearLog()">Clear Chronicle</button>
-  </div>`;
-  return h;
+  const entries=S.log.length?S.log.map(e=>`<div class="lentry"><span class="ltime">${e.t}</span><span>${e.txt}</span></div>`).join('')
+    :`<div style="color:var(--dim);font-size:.67rem;text-align:center;letter-spacing:.1em;padding:.875rem 0">No deeds recorded yet. Begin thy journey.</div>`;
+  return P('The Chronicle Scroll',entries)+
+    `<div style="text-align:center;margin-top:.875rem"><button class="btn btnd" onclick="clearLog()">Clear Chronicle</button></div>`;
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-async function init(){
-  try{
-    const timeout=new Promise((_,rej)=>setTimeout(()=>rej('timeout'),2500));
-    const r=await Promise.race([window.storage.get('ck3life_v3'),timeout]);
-    if(r&&r.value){
-      const parsed=JSON.parse(r.value);
-      S=parsed;
-      ['completedDecrees','openCourses'].forEach(k=>{if(!S[k])S[k]=[]});
-      Object.keys(S.attributes).forEach(k=>{
-        if(!S.attributes[k].unlockedTraits)S.attributes[k].unlockedTraits=[];
-        if(!S.attributes[k].totalXP)S.attributes[k].totalXP=0;
-      });
-      if(S.lastDaily!==today()){
-        S.completedDaily=[];
-        S.completedDecrees=(S.completedDecrees||[]).filter(id=>{
-          const d=(S.decrees||[]).find(x=>x.id===id);return d&&d.type==='weekly';
-        });
-        S.lastDaily=today();
-      }
-      if(S.lastWeekly!==weekStart()){S.completedWeekly=[];S.lastWeekly=weekStart()}
-      notif('⚜ Chronicle restored from memory');
-    }
-  }catch(e){}
+function init(){
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   render();
+  tryLoad();
 }
 init();
 </script>
